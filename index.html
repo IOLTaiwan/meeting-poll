@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>線上會議時間投票</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+    background: #f5f7fa;
+    color: #1a1a2e;
+    min-height: 100vh;
+    padding: 24px 16px 40px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+  }
+  .header p {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .deadline-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    color: #856404;
+    margin-top: 10px;
+  }
+  .deadline-banner.closed {
+    background: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+  }
+  .deadline-banner .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ffc107;
+    animation: pulse 1.5s infinite;
+  }
+  .deadline-banner.closed .dot {
+    background: #dc3545;
+    animation: none;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .name-section {
+    max-width: 480px;
+    margin: 0 auto 24px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .name-section label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+  }
+  .name-row {
+    display: flex;
+    gap: 10px;
+  }
+  .name-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid #e0e4ef;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  .name-row input:focus { border-color: #4f6ef7; }
+  .btn-confirm {
+    padding: 10px 20px;
+    background: #4f6ef7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .btn-confirm:hover { background: #3a55d4; }
+  .btn-confirm:active { transform: scale(0.97); }
+  .current-user {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #4f6ef7;
+    font-weight: 500;
+  }
+
+  .grid-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    overflow-x: auto;
+  }
+
+  .grid-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 6px;
+    min-width: 560px;
+  }
+
+  .grid-table th {
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #555;
+    padding: 6px 4px 10px;
+  }
+  .grid-table th .day-name {
+    font-size: 1rem;
+    color: #1a1a2e;
+    display: block;
+  }
+  .grid-table th .day-date {
+    font-size: 0.78rem;
+    color: #888;
+  }
+
+  .time-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #666;
+    padding: 6px 10px;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .time-label .period {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+  .time-label .time-range {
+    color: #999;
+    font-size: 0.72rem;
+    font-weight: 500;
+  }
+
+  .slot-cell {
+    vertical-align: top;
+    padding: 4px 2px;
+  }
+
+  .slot-btn {
+    width: 100%;
+    min-height: 80px;
+    border-radius: 12px;
+    border: 2px solid #e0e4ef;
+    background: #f8f9ff;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: relative;
+    font-family: inherit;
+  }
+  .slot-btn:hover:not(.voted-self):not(:disabled) {
+    border-color: #4f6ef7;
+    background: #eef1ff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(79,110,247,0.15);
+  }
+  .slot-btn.voted-self {
+    border-color: #4f6ef7;
+    background: linear-gradient(135deg, #eef1ff, #dce3ff);
+    box-shadow: 0 2px 8px rgba(79,110,247,0.2);
+  }
+  .slot-btn.has-votes:not(.voted-self) {
+    border-color: #b8c5ff;
+    background: #f0f3ff;
+  }
+  .slot-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .vote-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4f6ef7;
+    line-height: 1;
+  }
+  .slot-btn:not(.has-votes) .vote-count { color: #ccc; }
+  .vote-label {
+    font-size: 0.7rem;
+    color: #888;
+  }
+  .slot-btn.voted-self .vote-label { color: #4f6ef7; font-weight: 600; }
+
+  .voter-names {
+    font-size: 0.68rem;
+    color: #666;
+    text-align: center;
+    line-height: 1.4;
+    max-width: 100%;
+    word-break: break-all;
+  }
+  .my-checkmark {
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 0.75rem;
+    color: #4f6ef7;
+  }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #666;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 14px; height: 14px; border-radius: 4px;
+    border: 2px solid;
+  }
+  .legend-dot.empty { border-color: #e0e4ef; background: #f8f9ff; }
+  .legend-dot.others { border-color: #b8c5ff; background: #f0f3ff; }
+  .legend-dot.mine { border-color: #4f6ef7; background: #dce3ff; }
+
+  .toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a2e;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.88rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .instruction {
+    text-align: center;
+    font-size: 0.82rem;
+    color: #888;
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📅 線上會議時間投票</h1>
+  <p>請選出您方便參加的時段（可複選），協助安排最佳會議時間</p>
+  <div class="deadline-banner" id="deadlineBanner">
+    <span class="dot"></span>
+    <span id="deadlineText">投票截止：6月25日 凌晨 00:00</span>
+  </div>
+</div>
+
+<div class="name-section">
+  <label>您的姓名</label>
+  <div class="name-row">
+    <input type="text" id="nameInput" placeholder="請輸入您的姓名…" maxlength="20" />
+    <button class="btn-confirm" id="confirmBtn" onclick="confirmName()">確認</button>
+  </div>
+  <div class="current-user" id="currentUserDisplay" style="display:none"></div>
+</div>
+
+<div class="grid-wrapper">
+  <table class="grid-table" id="pollGrid"></table>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot empty"></div>尚無人選</div>
+    <div class="legend-item"><div class="legend-dot others"></div>他人已選</div>
+    <div class="legend-item"><div class="legend-dot mine"></div>我已選</div>
+  </div>
+</div>
+
+<p class="instruction" id="instruction">請先輸入姓名，再點選可出席的時段</p>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'meeting_poll_votes_v1';
+const DEADLINE = new Date('2026-06-25T00:00:00');
+const DAYS = [
+  { label: '週一', date: '6/29' },
+  { label: '週二', date: '6/30' },
+  { label: '週三', date: '7/1' },
+  { label: '週四', date: '7/2' },
+  { label: '週五', date: '7/3' },
+];
+const SLOTS = [
+  { key: 'morning', emoji: '🌤', label: '上午', time: '10:00–12:00' },
+  { key: 'afternoon', emoji: '☀️', label: '下午', time: '14:00–17:00' },
+  { key: 'evening', emoji: '🌙', label: '晚上', time: '19:00–21:00' },
+];
+let currentUser = null;
+let isClosed = false;
+function loadVotes() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+function saveVotes(votes) { localStorage.setItem(STORAGE_KEY, JSON.stringify(votes)); }
+function getSlotId(dayIdx, slotKey) { return `d${dayIdx}_${slotKey}`; }
+function checkDeadline() {
+  const now = new Date();
+  isClosed = now >= DEADLINE;
+  const banner = document.getElementById('deadlineBanner');
+  const text = document.getElementById('deadlineText');
+  if (isClosed) {
+    banner.className = 'deadline-banner closed';
+    text.textContent = '投票已截止（6月25日 凌晨 00:00）';
+  } else {
+    const diff = DEADLINE - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    const pad = n => String(n).padStart(2,'0');
+    text.textContent = `投票截止：6月25日 00:00 — 剩餘 ${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+  return isClosed;
+}
+function confirmName() {
+  const val = document.getElementById('nameInput').value.trim();
+  if (!val) { showToast('請輸入您的姓名！'); return; }
+  currentUser = val;
+  document.getElementById('currentUserDisplay').style.display = 'block';
+  document.getElementById('currentUserDisplay').textContent = `✅ 目前以「${currentUser}」身份投票`;
+  document.getElementById('instruction').textContent = '點選時段即可投票，再點一次取消';
+  renderGrid();
+  showToast(`歡迎，${currentUser}！請選擇您的可出席時段 👇`);
+}
+document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') confirmName(); });
+function renderGrid() {
+  const votes = loadVotes();
+  const table = document.getElementById('pollGrid');
+  let html = '<thead><tr><th></th>';
+  DAYS.forEach(d => { html += `<th><span class="day-name">${d.label}</span><span class="day-date">${d.date}</span></th>`; });
+  html += '</tr></thead><tbody>';
+  SLOTS.forEach(slot => {
+    html += `<tr><td class="time-label"><span class="period">${slot.emoji} ${slot.label}</span><span class="time-range">${slot.time}</span></td>`;
+    DAYS.forEach((_, di) => {
+      const id = getSlotId(di, slot.key);
+      const voters = votes[id] || [];
+      const iVoted = currentUser && voters.includes(currentUser);
+      const count = voters.length;
+      const names = voters.slice(0, 5).join('、') + (voters.length > 5 ? `…等${voters.length}人` : '');
+      let cls = 'slot-btn';
+      if (iVoted) cls += ' voted-self';
+      else if (count > 0) cls += ' has-votes';
+      const disabled = (isClosed || !currentUser) ? 'disabled' : '';
+      html += `<td class="slot-cell"><button class="${cls}" ${disabled} onclick="toggleVote('${id}')">
+        ${iVoted ? '<span class="my-checkmark">✓ 我</span>' : ''}
+        <span class="vote-count">${count > 0 ? count : '—'}</span>
+        <span class="vote-label">${count > 0 ? '位可出席' : '尚無'}</span>
+        ${names ? `<span class="voter-names">${names}</span>` : ''}
+      </button></td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+function toggleVote(slotId) {
+  if (!currentUser || isClosed) return;
+  const votes = loadVotes();
+  if (!votes[slotId]) votes[slotId] = [];
+  const idx = votes[slotId].indexOf(currentUser);
+  if (idx === -1) { votes[slotId].push(currentUser); showToast('✅ 已加入！'); }
+  else { votes[slotId].splice(idx, 1); showToast('已取消選取'); }
+  saveVotes(votes);
+  renderGrid();
+}
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+checkDeadline();
+renderGrid();
+setInterval(() => { const w = isClosed; checkDeadline(); if (!w && isClosed) renderGrid(); }, 1000);
+</script>
+</body>
+</html>
