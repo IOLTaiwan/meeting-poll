@@ -63,6 +63,7 @@
     50% { opacity: 0.3; }
   }
 
+  /* Name input */
   .name-section {
     max-width: 480px;
     margin: 0 auto 24px;
@@ -115,6 +116,7 @@
     font-weight: 500;
   }
 
+  /* Grid */
   .grid-wrapper {
     max-width: 900px;
     margin: 0 auto;
@@ -238,6 +240,7 @@
     color: #4f6ef7;
   }
 
+  /* Legend */
   .legend {
     display: flex;
     gap: 16px;
@@ -255,6 +258,7 @@
   .legend-dot.others { border-color: #b8c5ff; background: #f0f3ff; }
   .legend-dot.mine { border-color: #4f6ef7; background: #dce3ff; }
 
+  /* Toast */
   .toast {
     position: fixed;
     bottom: 28px; left: 50%;
@@ -305,6 +309,7 @@
 
 <div class="grid-wrapper">
   <table class="grid-table" id="pollGrid"></table>
+
   <div class="legend">
     <div class="legend-item"><div class="legend-dot empty"></div>尚無人選</div>
     <div class="legend-item"><div class="legend-dot others"></div>他人已選</div>
@@ -313,11 +318,13 @@
 </div>
 
 <p class="instruction" id="instruction">請先輸入姓名，再點選可出席的時段</p>
+
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'meeting_poll_votes_v1';
+const API_URL = 'https://script.google.com/macros/s/AKfycbx31q07UXEZ8fioUZ5wZ314uqgvy5P5oeCq4i2IWZS7a8yaKUY2cyFOYjTrTqc0cSZD/exec';
 const DEADLINE = new Date('2026-06-25T00:00:00');
+
 const DAYS = [
   { label: '週一', date: '6/29' },
   { label: '週二', date: '6/30' },
@@ -325,18 +332,47 @@ const DAYS = [
   { label: '週四', date: '7/2' },
   { label: '週五', date: '7/3' },
 ];
+
 const SLOTS = [
   { key: 'morning', emoji: '🌤', label: '上午', time: '10:00–12:00' },
   { key: 'afternoon', emoji: '☀️', label: '下午', time: '14:00–17:00' },
   { key: 'evening', emoji: '🌙', label: '晚上', time: '19:00–21:00' },
 ];
+
 let currentUser = null;
 let isClosed = false;
-function loadVotes() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+let votes = {};  // votes[slotId] = ["Alice", "Bob", ...]
+
+function getSlotId(dayIdx, slotKey) {
+  return `d${dayIdx}_${slotKey}`;
 }
-function saveVotes(votes) { localStorage.setItem(STORAGE_KEY, JSON.stringify(votes)); }
-function getSlotId(dayIdx, slotKey) { return `d${dayIdx}_${slotKey}`; }
+
+// --- API ---
+async function fetchVotes() {
+  try {
+    const res = await fetch(API_URL + '?action=get');
+    const data = await res.json();
+    if (data.ok) votes = data.votes;
+  } catch (e) {
+    console.warn('fetchVotes failed', e);
+  }
+  renderGrid();
+}
+
+async function sendVote(slotId, active) {
+  const name = encodeURIComponent(currentUser);
+  const url = `${API_URL}?action=vote&name=${name}&slotId=${slotId}&active=${active}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.ok) votes = data.votes;
+  } catch (e) {
+    console.warn('sendVote failed', e);
+  }
+  renderGrid();
+}
+
+// --- Deadline ---
 function checkDeadline() {
   const now = new Date();
   isClosed = now >= DEADLINE;
@@ -355,6 +391,8 @@ function checkDeadline() {
   }
   return isClosed;
 }
+
+// --- Name ---
 function confirmName() {
   const val = document.getElementById('nameInput').value.trim();
   if (!val) { showToast('請輸入您的姓名！'); return; }
@@ -365,15 +403,25 @@ function confirmName() {
   renderGrid();
   showToast(`歡迎，${currentUser}！請選擇您的可出席時段 👇`);
 }
-document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') confirmName(); });
+
+document.getElementById('nameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmName();
+});
+
+// --- Render ---
 function renderGrid() {
-  const votes = loadVotes();
   const table = document.getElementById('pollGrid');
   let html = '<thead><tr><th></th>';
-  DAYS.forEach(d => { html += `<th><span class="day-name">${d.label}</span><span class="day-date">${d.date}</span></th>`; });
+  DAYS.forEach(d => {
+    html += `<th><span class="day-name">${d.label}</span><span class="day-date">${d.date}</span></th>`;
+  });
   html += '</tr></thead><tbody>';
+
   SLOTS.forEach(slot => {
-    html += `<tr><td class="time-label"><span class="period">${slot.emoji} ${slot.label}</span><span class="time-range">${slot.time}</span></td>`;
+    html += `<tr><td class="time-label">
+      <span class="period">${slot.emoji} ${slot.label}</span>
+      <span class="time-range">${slot.time}</span>
+    </td>`;
     DAYS.forEach((_, di) => {
       const id = getSlotId(di, slot.key);
       const voters = votes[id] || [];
@@ -384,28 +432,40 @@ function renderGrid() {
       if (iVoted) cls += ' voted-self';
       else if (count > 0) cls += ' has-votes';
       const disabled = (isClosed || !currentUser) ? 'disabled' : '';
-      html += `<td class="slot-cell"><button class="${cls}" ${disabled} onclick="toggleVote('${id}')">
-        ${iVoted ? '<span class="my-checkmark">✓ 我</span>' : ''}
-        <span class="vote-count">${count > 0 ? count : '—'}</span>
-        <span class="vote-label">${count > 0 ? '位可出席' : '尚無'}</span>
-        ${names ? `<span class="voter-names">${names}</span>` : ''}
-      </button></td>`;
+      html += `<td class="slot-cell">
+        <button class="${cls}" ${disabled} onclick="toggleVote('${id}')">
+          ${iVoted ? '<span class="my-checkmark">✓ 我</span>' : ''}
+          <span class="vote-count">${count > 0 ? count : '—'}</span>
+          <span class="vote-label">${count > 0 ? '位可出席' : '尚無'}</span>
+          ${names ? `<span class="voter-names">${names}</span>` : ''}
+        </button>
+      </td>`;
     });
     html += '</tr>';
   });
+
   html += '</tbody>';
   table.innerHTML = html;
 }
+
+// --- Toggle ---
 function toggleVote(slotId) {
   if (!currentUser || isClosed) return;
-  const votes = loadVotes();
-  if (!votes[slotId]) votes[slotId] = [];
-  const idx = votes[slotId].indexOf(currentUser);
-  if (idx === -1) { votes[slotId].push(currentUser); showToast('✅ 已加入！'); }
-  else { votes[slotId].splice(idx, 1); showToast('已取消選取'); }
-  saveVotes(votes);
+  const voters = votes[slotId] || [];
+  const iVoted = voters.includes(currentUser);
+  // Optimistic update
+  if (!iVoted) {
+    votes[slotId] = [...voters, currentUser];
+    showToast('✅ 已加入！');
+  } else {
+    votes[slotId] = voters.filter(n => n !== currentUser);
+    showToast('已取消選取');
+  }
   renderGrid();
+  sendVote(slotId, !iVoted);
 }
+
+// --- Toast ---
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -414,9 +474,18 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+// --- Init ---
 checkDeadline();
 renderGrid();
-setInterval(() => { const w = isClosed; checkDeadline(); if (!w && isClosed) renderGrid(); }, 1000);
+fetchVotes();
+setInterval(() => {
+  const wasClosed = isClosed;
+  checkDeadline();
+  if (!wasClosed && isClosed) renderGrid();
+}, 1000);
+// Refresh votes every 30 seconds
+setInterval(fetchVotes, 30000);
 </script>
 </body>
 </html>
