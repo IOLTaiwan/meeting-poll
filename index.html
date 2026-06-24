@@ -10,60 +10,37 @@
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
-    background: #f5f7fa;
-    color: #1a1a2e;
-    min-height: 100vh;
-    padding: 24px 16px 60px;
+    background: #f5f7fa; color: #1a1a2e; min-height: 100vh; padding: 24px 16px 60px;
   }
 
+  /* ── Header ── */
   .header { text-align: center; margin-bottom: 28px; }
   .header h1 { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
   .header p { color: #666; font-size: 0.9rem; }
-
   .deadline-banner {
     display: inline-flex; align-items: center; gap: 8px;
     background: #fff3cd; border: 1px solid #ffc107;
-    border-radius: 8px; padding: 8px 16px;
-    font-size: 0.85rem; color: #856404; margin-top: 10px;
+    border-radius: 8px; padding: 8px 16px; font-size: 0.85rem; color: #856404; margin-top: 10px;
   }
   .deadline-banner.closed { background: #f8d7da; border-color: #dc3545; color: #721c24; }
-  .deadline-banner .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #ffc107; animation: pulse 1.5s infinite;
-  }
+  .deadline-banner .dot { width: 8px; height: 8px; border-radius: 50%; background: #ffc107; animation: pulse 1.5s infinite; }
   .deadline-banner.closed .dot { background: #dc3545; animation: none; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* Name input */
-  .name-section {
-    max-width: 480px; margin: 0 auto 24px;
-    background: #fff; border-radius: 12px; padding: 20px 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  }
+  /* ── Name ── */
+  .name-section { max-width: 480px; margin: 0 auto 24px; background: #fff; border-radius: 12px; padding: 20px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
   .name-section label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 8px; }
   .name-row { display: flex; gap: 10px; }
-  .name-row input {
-    flex: 1; padding: 10px 14px; border: 2px solid #e0e4ef;
-    border-radius: 8px; font-size: 0.95rem; outline: none;
-    transition: border-color 0.2s; font-family: inherit;
-  }
+  .name-row input { flex: 1; padding: 10px 14px; border: 2px solid #e0e4ef; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; font-family: inherit; }
   .name-row input:focus { border-color: #4f6ef7; }
-  .btn-confirm {
-    padding: 10px 20px; background: #4f6ef7; color: white;
-    border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600;
-    cursor: pointer; transition: background 0.2s, transform 0.1s;
-    white-space: nowrap; font-family: inherit;
-  }
+  .btn-confirm { padding: 10px 20px; background: #4f6ef7; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; white-space: nowrap; font-family: inherit; }
   .btn-confirm:hover { background: #3a55d4; }
   .btn-confirm:active { transform: scale(0.97); }
+  .btn-confirm:disabled { background: #b0b8e8; cursor: not-allowed; }
   .current-user { margin-top: 10px; font-size: 0.85rem; color: #4f6ef7; font-weight: 500; }
 
-  /* Grid */
-  .grid-wrapper {
-    max-width: 900px; margin: 0 auto;
-    background: #fff; border-radius: 16px; padding: 24px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow-x: auto;
-  }
+  /* ── Voting grid ── */
+  .grid-wrapper { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow-x: auto; }
   .grid-table { width: 100%; border-collapse: separate; border-spacing: 6px; min-width: 560px; }
   .grid-table th { text-align: center; font-size: 0.82rem; font-weight: 700; color: #555; padding: 6px 4px 10px; }
   .grid-table th .day-name { font-size: 1rem; color: #1a1a2e; display: block; }
@@ -72,36 +49,16 @@
   .time-label .period { display: block; font-size: 1rem; margin-bottom: 2px; }
   .time-label .time-range { color: #999; font-size: 0.72rem; font-weight: 500; }
   .slot-cell { vertical-align: top; padding: 4px 2px; }
-
   .slot-btn {
-    width: 100%; min-height: 80px; border-radius: 12px;
-    border: 2px solid #e0e4ef; background: #f8f9ff;
-    cursor: pointer; transition: all 0.18s ease;
-    padding: 10px 8px; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 6px; position: relative; font-family: inherit;
+    width: 100%; min-height: 80px; border-radius: 12px; border: 2px solid #e0e4ef; background: #f8f9ff;
+    cursor: pointer; transition: all 0.18s ease; padding: 10px 8px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 6px; position: relative; font-family: inherit;
   }
-  .slot-btn:hover:not(.selected):not(:disabled) {
-    border-color: #4f6ef7; background: #eef1ff;
-    transform: translateY(-1px); box-shadow: 0 3px 10px rgba(79,110,247,0.15);
-  }
-  /* locally selected by current user (pending submit) */
-  .slot-btn.selected {
-    border-color: #4f6ef7;
-    background: linear-gradient(135deg, #eef1ff, #dce3ff);
-    box-shadow: 0 2px 8px rgba(79,110,247,0.2);
-  }
-  /* confirmed submitted (same style as selected but green accent) */
-  .slot-btn.submitted {
-    border-color: #1a7a3c;
-    background: linear-gradient(135deg, #eafff2, #c8f5d8);
-    box-shadow: 0 2px 8px rgba(26,122,60,0.15);
-  }
-  .slot-btn.has-votes:not(.selected):not(.submitted) {
-    border-color: #b8c5ff; background: #f0f3ff;
-  }
+  .slot-btn:hover:not(.selected):not(:disabled) { border-color: #4f6ef7; background: #eef1ff; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(79,110,247,0.15); }
+  .slot-btn.selected { border-color: #4f6ef7; background: linear-gradient(135deg,#eef1ff,#dce3ff); box-shadow: 0 2px 8px rgba(79,110,247,0.2); }
+  .slot-btn.submitted { border-color: #1a7a3c; background: linear-gradient(135deg,#eafff2,#c8f5d8); box-shadow: 0 2px 8px rgba(26,122,60,0.15); }
+  .slot-btn.has-votes:not(.selected):not(.submitted) { border-color: #b8c5ff; background: #f0f3ff; }
   .slot-btn:disabled { cursor: not-allowed; opacity: 0.6; }
-
   .vote-count { font-size: 1.5rem; font-weight: 700; color: #4f6ef7; line-height: 1; }
   .slot-btn:not(.has-votes):not(.selected):not(.submitted) .vote-count { color: #ccc; }
   .slot-btn.submitted .vote-count { color: #1a7a3c; }
@@ -111,8 +68,6 @@
   .voter-names { font-size: 0.68rem; color: #666; text-align: center; line-height: 1.4; max-width: 100%; word-break: break-all; }
   .my-checkmark { position: absolute; top: 6px; right: 8px; font-size: 0.75rem; color: #4f6ef7; }
   .slot-btn.submitted .my-checkmark { color: #1a7a3c; }
-
-  /* Legend */
   .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 20px; font-size: 0.8rem; color: #666; }
   .legend-item { display: flex; align-items: center; gap: 6px; }
   .legend-dot { width: 14px; height: 14px; border-radius: 4px; border: 2px solid; }
@@ -121,142 +76,150 @@
   .legend-dot.pending { border-color: #4f6ef7; background: #dce3ff; }
   .legend-dot.done { border-color: #1a7a3c; background: #c8f5d8; }
 
-  /* Submit section */
-  .submit-section {
-    max-width: 900px; margin: 20px auto 0;
-    display: none;
-  }
+  /* ── Submit bar ── */
+  .submit-section { max-width: 900px; margin: 20px auto 0; display: none; }
   .submit-section.visible { display: block; }
-
-  .submit-bar {
-    background: #fff; border-radius: 12px; padding: 16px 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 16px; flex-wrap: wrap;
-  }
+  .submit-bar { background: #fff; border-radius: 12px; padding: 16px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   .submit-summary { font-size: 0.9rem; color: #555; }
-  .submit-summary strong { color: #1a1a2e; }
-  .submit-summary .count-badge {
-    display: inline-block; background: #4f6ef7; color: #fff;
-    border-radius: 12px; padding: 2px 10px; font-size: 0.78rem; font-weight: 700; margin-left: 6px;
-  }
-  .submit-summary .count-badge.zero { background: #bbb; }
-
-  .btn-submit {
-    padding: 12px 28px; background: #4f6ef7; color: white;
-    border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
-    cursor: pointer; transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-    font-family: inherit; white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(79,110,247,0.3);
-  }
+  .count-badge { display: inline-block; background: #4f6ef7; color: #fff; border-radius: 12px; padding: 2px 10px; font-size: 0.78rem; font-weight: 700; margin-left: 6px; }
+  .count-badge.zero { background: #bbb; }
+  .btn-submit { padding: 12px 28px; background: #4f6ef7; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; font-family: inherit; white-space: nowrap; box-shadow: 0 4px 12px rgba(79,110,247,0.3); }
   .btn-submit:hover:not(:disabled) { background: #3a55d4; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(79,110,247,0.35); }
   .btn-submit:active:not(:disabled) { transform: scale(0.97); }
   .btn-submit:disabled { background: #b0b8e8; cursor: not-allowed; box-shadow: none; }
-
-  .btn-submit.submitting {
-    background: #7a8fe8; cursor: not-allowed;
-  }
-  .btn-submit.submitting::after {
-    content: '';
-    display: inline-block; width: 14px; height: 14px;
-    border: 2px solid rgba(255,255,255,0.5);
-    border-top-color: #fff; border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-    margin-left: 8px; vertical-align: middle;
-  }
+  .btn-submit.submitting { background: #7a8fe8; cursor: not-allowed; }
+  .btn-submit.submitting::after { content:''; display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.5); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; margin-left:8px; vertical-align:middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Success confirmation overlay */
-  .success-banner {
-    display: none;
-    max-width: 900px; margin: 20px auto 0;
-    background: linear-gradient(135deg, #eafff2, #d4f7e4);
-    border: 2px solid #1a7a3c; border-radius: 16px;
-    padding: 28px 32px; text-align: center;
-    box-shadow: 0 4px 16px rgba(26,122,60,0.12);
+  /* ── Results page ── */
+  #resultsPage { display: none; }
+  #resultsPage.visible { display: block; }
+
+  .results-header {
+    max-width: 900px; margin: 0 auto 20px;
+    background: linear-gradient(135deg, #1a7a3c, #22944a);
+    border-radius: 16px; padding: 24px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+    box-shadow: 0 4px 16px rgba(26,122,60,0.2);
     animation: fadeIn 0.4s ease;
   }
-  .success-banner.visible { display: block; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  .success-banner .check-icon { font-size: 2.8rem; margin-bottom: 10px; }
-  .success-banner h2 { font-size: 1.3rem; font-weight: 700; color: #1a7a3c; margin-bottom: 6px; }
-  .success-banner p { font-size: 0.9rem; color: #2e6b4a; margin-bottom: 16px; }
-  .success-slots { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
-  .success-slot-tag {
-    background: #1a7a3c; color: #fff;
-    border-radius: 20px; padding: 5px 14px;
-    font-size: 0.82rem; font-weight: 600;
-  }
-  .btn-modify {
-    padding: 9px 22px; background: transparent;
-    border: 2px solid #1a7a3c; color: #1a7a3c;
-    border-radius: 8px; font-size: 0.88rem; font-weight: 600;
-    cursor: pointer; transition: all 0.2s; font-family: inherit;
-  }
-  .btn-modify:hover { background: #1a7a3c; color: #fff; }
+  .results-header-text h2 { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .results-header-text p { font-size: 0.88rem; color: rgba(255,255,255,0.85); }
+  .my-picks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pick-tag { background: rgba(255,255,255,0.2); color: #fff; border-radius: 20px; padding: 4px 12px; font-size: 0.78rem; font-weight: 600; }
+  .btn-modify { padding: 9px 20px; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.6); color: #fff; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; white-space: nowrap; }
+  .btn-modify:hover { background: rgba(255,255,255,0.3); }
 
-  /* Toast */
-  .toast {
-    position: fixed; bottom: 28px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: #1a1a2e; color: #fff; padding: 10px 22px;
-    border-radius: 24px; font-size: 0.88rem; opacity: 0;
-    pointer-events: none; transition: all 0.3s ease; z-index: 999; white-space: nowrap;
+  /* Voters list */
+  .voters-section { max-width: 900px; margin: 0 auto 20px; background: #fff; border-radius: 16px; padding: 20px 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); animation: fadeIn 0.4s ease 0.1s both; }
+  .voters-section h3 { font-size: 0.95rem; font-weight: 700; color: #1a1a2e; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .voters-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .voter-chip { display: flex; align-items: center; gap: 6px; background: #f0f3ff; border: 1.5px solid #b8c5ff; border-radius: 20px; padding: 5px 14px; font-size: 0.82rem; font-weight: 500; color: #3a4aaa; }
+  .voter-chip.is-me { background: #dce3ff; border-color: #4f6ef7; color: #2a3cb5; font-weight: 700; }
+
+  /* Results grid */
+  .results-grid-wrapper { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow-x: auto; animation: fadeIn 0.4s ease 0.2s both; }
+  .results-grid-wrapper h3 { font-size: 0.95rem; font-weight: 700; color: #1a1a2e; margin-bottom: 16px; }
+  .results-table { width: 100%; border-collapse: separate; border-spacing: 6px; min-width: 560px; }
+  .results-table th { text-align: center; font-size: 0.82rem; font-weight: 700; color: #555; padding: 6px 4px 10px; }
+  .results-table th .day-name { font-size: 1rem; color: #1a1a2e; display: block; }
+  .results-table th .day-date { font-size: 0.78rem; color: #888; }
+  .res-cell { vertical-align: top; padding: 4px 2px; }
+  .res-slot {
+    width: 100%; min-height: 90px; border-radius: 12px; padding: 10px 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    gap: 4px; border: 2px solid #e0e4ef; background: #f8f9ff;
   }
+  .res-slot.has-votes { border-color: #b8c5ff; background: #f0f3ff; }
+  .res-slot.i-voted { border-color: #4f6ef7; background: linear-gradient(135deg,#eef1ff,#dce3ff); }
+  .res-slot.top-slot { border-color: #f5a623; background: linear-gradient(135deg,#fffbf0,#fff3d0); }
+  .res-count { font-size: 1.6rem; font-weight: 800; line-height: 1; color: #4f6ef7; margin-top: 4px; }
+  .res-slot:not(.has-votes) .res-count { color: #ddd; }
+  .res-slot.top-slot .res-count { color: #c07800; }
+  .res-unit { font-size: 0.65rem; color: #888; }
+  .res-slot.top-slot .res-unit { color: #c07800; }
+  .res-names { font-size: 0.64rem; color: #555; text-align: center; line-height: 1.5; word-break: break-all; margin-top: 2px; }
+  .res-crown { font-size: 0.85rem; }
+  .me-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #4f6ef7; margin-right: 2px; vertical-align: middle; }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── Toast ── */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1a2e; color: #fff; padding: 10px 22px; border-radius: 24px; font-size: 0.88rem; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 999; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.error { background: #c0392b; }
-
   .instruction { text-align: center; font-size: 0.82rem; color: #888; margin-top: 16px; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>📅 線上會議時間投票</h1>
-  <p>請選出您方便參加的時段（可複選），協助安排最佳會議時間</p>
-  <div class="deadline-banner" id="deadlineBanner">
-    <span class="dot"></span>
-    <span id="deadlineText">投票截止：6月25日 凌晨 00:00</span>
-  </div>
-</div>
-
-<div class="name-section">
-  <label>您的姓名</label>
-  <div class="name-row">
-    <input type="text" id="nameInput" placeholder="請輸入您的姓名…" maxlength="20" />
-    <button class="btn-confirm" id="confirmBtn" onclick="confirmName()">確認</button>
-  </div>
-  <div class="current-user" id="currentUserDisplay" style="display:none"></div>
-</div>
-
-<div class="grid-wrapper">
-  <table class="grid-table" id="pollGrid"></table>
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot empty"></div>尚無人選</div>
-    <div class="legend-item"><div class="legend-dot others"></div>他人已選</div>
-    <div class="legend-item"><div class="legend-dot pending"></div>我的選擇（未送出）</div>
-    <div class="legend-item"><div class="legend-dot done"></div>已送出</div>
-  </div>
-</div>
-
-<div class="submit-section" id="submitSection">
-  <div class="submit-bar">
-    <div class="submit-summary">
-      已選擇 <span class="count-badge zero" id="selectedCount">0</span> 個時段，確認後請送出
+<!-- ── VOTE PAGE ── -->
+<div id="votePage">
+  <div class="header">
+    <h1>📅 線上會議時間投票</h1>
+    <p>請選出您方便參加的時段（可複選），協助安排最佳會議時間</p>
+    <div class="deadline-banner" id="deadlineBanner">
+      <span class="dot"></span>
+      <span id="deadlineText">投票截止：6月25日 凌晨 00:00</span>
     </div>
-    <button class="btn-submit" id="submitBtn" onclick="submitVotes()">送出投票 →</button>
   </div>
+
+  <div class="name-section">
+    <label>您的姓名</label>
+    <div class="name-row">
+      <input type="text" id="nameInput" placeholder="請輸入您的姓名…" maxlength="20" />
+      <button class="btn-confirm" id="confirmBtn" onclick="confirmName()">確認</button>
+    </div>
+    <div class="current-user" id="currentUserDisplay" style="display:none"></div>
+  </div>
+
+  <div class="grid-wrapper">
+    <table class="grid-table" id="pollGrid"></table>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot empty"></div>尚無人選</div>
+      <div class="legend-item"><div class="legend-dot others"></div>他人已選</div>
+      <div class="legend-item"><div class="legend-dot pending"></div>我的選擇（未送出）</div>
+      <div class="legend-item"><div class="legend-dot done"></div>已送出</div>
+    </div>
+  </div>
+
+  <div class="submit-section" id="submitSection">
+    <div class="submit-bar">
+      <div class="submit-summary">
+        已選擇 <span class="count-badge zero" id="selectedCount">0</span> 個時段，確認後請送出
+      </div>
+      <button class="btn-submit" id="submitBtn" onclick="submitVotes()" disabled>送出投票 →</button>
+    </div>
+  </div>
+
+  <p class="instruction" id="instruction">請先輸入姓名，再點選可出席的時段</p>
 </div>
 
-<div class="success-banner" id="successBanner">
-  <div class="check-icon">✅</div>
-  <h2>投票已成功送出！</h2>
-  <p id="successName"></p>
-  <div class="success-slots" id="successSlots"></div>
-  <button class="btn-modify" onclick="enterEditMode()">修改選擇</button>
+<!-- ── RESULTS PAGE ── -->
+<div id="resultsPage">
+
+  <div class="results-header">
+    <div class="results-header-text">
+      <h2>✅ 投票已成功送出！</h2>
+      <p id="successName"></p>
+      <div class="my-picks" id="myPicksRow"></div>
+    </div>
+    <button class="btn-modify" onclick="enterEditMode()">✏️ 修改選擇</button>
+  </div>
+
+  <div class="voters-section">
+    <h3>👥 已投票人員 <span id="voterCountBadge" style="font-size:0.82rem;color:#666;font-weight:500"></span></h3>
+    <div class="voters-chips" id="votersChips"></div>
+  </div>
+
+  <div class="results-grid-wrapper">
+    <h3>📊 各時段投票結果</h3>
+    <table class="results-table" id="resultsGrid"></table>
+  </div>
+
 </div>
 
-<p class="instruction" id="instruction">請先輸入姓名，再點選可出席的時段</p>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -275,25 +238,25 @@ const SLOTS = [
   { key: 'afternoon', emoji: '☀️', label: '下午', time: '14:00–17:00' },
   { key: 'evening', emoji: '🌙', label: '晚上', time: '19:00–21:00' },
 ];
+const SLOT_LABELS = { morning: '🌤 上午 10:00–12:00', afternoon: '☀️ 下午 14:00–17:00', evening: '🌙 晚上 19:00–21:00' };
 
 let currentUser = null;
 let isClosed = false;
-let votes = {};               // server votes: votes[slotId] = [name, ...]
-let localSelections = new Set();  // user's pending local selections
-let serverUserVotes = new Set();  // user's last-submitted selections (from server)
-let submitted = false;        // whether user has successfully submitted this session
+let votes = {};
+let localSelections = new Set();
+let serverUserVotes = new Set();
+let submitted = false;
 let isSubmitting = false;
 
 function getSlotId(d, k) { return `d${d}_${k}`; }
 
-// --- API ---
+// ── API ──
 async function fetchVotes() {
   try {
     const res = await fetch(API_URL + '?action=get');
     const data = await res.json();
     if (data.ok) {
       votes = data.votes;
-      // Build serverUserVotes from response
       if (currentUser) {
         serverUserVotes = new Set();
         for (const [slotId, voters] of Object.entries(votes)) {
@@ -302,10 +265,11 @@ async function fetchVotes() {
       }
     }
   } catch (e) { console.warn('fetchVotes failed', e); }
-  renderGrid();
+  if (!submitted) renderGrid();
+  else renderResultsGrid(); // refresh results if on results page
 }
 
-// --- Deadline ---
+// ── Deadline ──
 function checkDeadline() {
   const now = new Date();
   isClosed = now >= DEADLINE;
@@ -324,7 +288,7 @@ function checkDeadline() {
   }
 }
 
-// --- Name ---
+// ── Name ──
 function confirmName() {
   const val = document.getElementById('nameInput').value.trim();
   if (!val) { showToast('請輸入您的姓名！'); return; }
@@ -334,34 +298,25 @@ function confirmName() {
   document.getElementById('currentUserDisplay').style.display = 'block';
   document.getElementById('currentUserDisplay').textContent = `✅ 目前以「${currentUser}」身份投票`;
   document.getElementById('instruction').textContent = '勾選可出席的時段，完成後按「送出投票」';
-
-  // Init local selections from server state
   localSelections = new Set(serverUserVotes);
   submitted = false;
-
   document.getElementById('submitSection').classList.add('visible');
   renderGrid();
   updateSubmitBar();
   showToast(`歡迎，${currentUser}！請選擇時段後送出`);
 }
+document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') confirmName(); });
 
-document.getElementById('nameInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') confirmName();
-});
-
-// --- Toggle (local only, no API) ---
+// ── Toggle (local only) ──
 function toggleVote(slotId) {
   if (!currentUser || isClosed || isSubmitting || submitted) return;
-  if (localSelections.has(slotId)) {
-    localSelections.delete(slotId);
-  } else {
-    localSelections.add(slotId);
-  }
+  if (localSelections.has(slotId)) localSelections.delete(slotId);
+  else localSelections.add(slotId);
   renderGrid();
   updateSubmitBar();
 }
 
-// --- Submit ---
+// ── Submit ──
 async function submitVotes() {
   if (!currentUser || isClosed || isSubmitting || localSelections.size === 0) return;
   isSubmitting = true;
@@ -371,30 +326,15 @@ async function submitVotes() {
   btn.textContent = '送出中';
 
   try {
-    // Compute diff vs server
-    const toAdd = [...localSelections].filter(id => !serverUserVotes.has(id));
-    const toRemove = [...serverUserVotes].filter(id => !localSelections.has(id));
-    const toKeep = [...localSelections].filter(id => serverUserVotes.has(id));
-    // unchanged kept slots don't need API call
-
-    const calls = [
-      ...toAdd.map(id => sendVoteAPI(id, true)),
-      ...toRemove.map(id => sendVoteAPI(id, false)),
-      // resend kept ones too to ensure they're recorded
-      ...toKeep.map(id => sendVoteAPI(id, true)),
-    ];
+    const allSlotIds = DAYS.flatMap((_, di) => SLOTS.map(s => getSlotId(di, s.key)));
+    const calls = allSlotIds.map(id => sendVoteAPI(id, localSelections.has(id)));
     const results = await Promise.all(calls);
-    const anyFail = results.includes(false);
 
-    if (!anyFail) {
-      // Update server state
+    if (!results.includes(false)) {
       serverUserVotes = new Set(localSelections);
-      // Refresh votes from last API response
       submitted = true;
-      showSuccessBanner();
-    } else {
-      throw new Error('some calls failed');
-    }
+      showResultsPage();
+    } else { throw new Error('some calls failed'); }
   } catch (e) {
     showToast('⚠️ 部分儲存失敗，請重試', 'error');
     btn.classList.remove('submitting');
@@ -414,48 +354,57 @@ async function sendVoteAPI(slotId, active) {
   } catch (e) { return false; }
 }
 
-// --- Success Banner ---
-function showSuccessBanner() {
-  document.getElementById('submitSection').classList.remove('visible');
-  const banner = document.getElementById('successBanner');
-  banner.classList.add('visible');
-  document.getElementById('successName').textContent = `${currentUser}，感謝您的填寫！`;
+// ── Show results page ──
+function showResultsPage() {
+  document.getElementById('votePage').style.display = 'none';
+  document.getElementById('resultsPage').classList.add('visible');
 
-  // Show selected slots as tags
-  const slotsEl = document.getElementById('successSlots');
-  slotsEl.innerHTML = '';
-  const SLOT_LABELS = { morning: '🌤 上午 10:00–12:00', afternoon: '☀️ 下午 14:00–17:00', evening: '🌙 晚上 19:00–21:00' };
+  // Success header
+  document.getElementById('successName').textContent = `${currentUser}，感謝您的填寫！`;
+  const picksRow = document.getElementById('myPicksRow');
+  picksRow.innerHTML = '';
   [...localSelections].sort().forEach(id => {
-    const [, di, key] = id.match(/^d(\d+)_(.+)$/);
-    const day = DAYS[parseInt(di)];
+    const m = id.match(/^d(\d+)_(.+)$/);
+    if (!m) return;
+    const day = DAYS[parseInt(m[1])];
     const tag = document.createElement('span');
-    tag.className = 'success-slot-tag';
-    tag.textContent = `${day.label} ${day.date}　${SLOT_LABELS[key]}`;
-    slotsEl.appendChild(tag);
+    tag.className = 'pick-tag';
+    tag.textContent = `${day.label} ${day.date} ${SLOT_LABELS[m[2]]}`;
+    picksRow.appendChild(tag);
   });
 
-  document.getElementById('instruction').textContent = '';
-  renderGrid();
-  // scroll to banner
-  banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  renderVotersList();
+  renderResultsGrid();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function enterEditMode() {
-  submitted = false;
-  document.getElementById('successBanner').classList.remove('visible');
-  document.getElementById('submitSection').classList.add('visible');
-  const btn = document.getElementById('submitBtn');
-  btn.classList.remove('submitting');
-  btn.disabled = false;
-  btn.textContent = '送出投票 →';
-  document.getElementById('instruction').textContent = '修改後請再按「送出投票」';
-  renderGrid();
-  updateSubmitBar();
+// ── Voters list ──
+function renderVotersList() {
+  const allVoters = new Set();
+  for (const voters of Object.values(votes)) voters.forEach(n => allVoters.add(n));
+  const arr = [...allVoters].sort((a, b) => a.localeCompare(b, 'zh-TW'));
+  document.getElementById('voterCountBadge').textContent = `（共 ${arr.length} 人）`;
+  const chips = document.getElementById('votersChips');
+  chips.innerHTML = '';
+  if (arr.length === 0) {
+    chips.innerHTML = '<span style="color:#999;font-size:0.85rem">尚無人投票</span>';
+    return;
+  }
+  arr.forEach(name => {
+    const chip = document.createElement('div');
+    chip.className = 'voter-chip' + (name === currentUser ? ' is-me' : '');
+    chip.textContent = (name === currentUser ? '✓ ' : '') + name;
+    chips.appendChild(chip);
+  });
 }
 
-// --- Render ---
-function renderGrid() {
-  const table = document.getElementById('pollGrid');
+// ── Results grid ──
+function renderResultsGrid() {
+  // Find max votes to highlight top slots
+  const allCounts = DAYS.flatMap((_, di) => SLOTS.map(s => (votes[getSlotId(di, s.key)] || []).length));
+  const maxCount = Math.max(...allCounts, 0);
+
+  const table = document.getElementById('resultsGrid');
   let html = '<thead><tr><th></th>';
   DAYS.forEach(d => {
     html += `<th><span class="day-name">${d.label}</span><span class="day-date">${d.date}</span></th>`;
@@ -463,37 +412,34 @@ function renderGrid() {
   html += '</tr></thead><tbody>';
 
   SLOTS.forEach(slot => {
-    html += `<tr><td class="time-label">
-      <span class="period">${slot.emoji} ${slot.label}</span>
-      <span class="time-range">${slot.time}</span>
-    </td>`;
+    html += `<tr><td class="time-label"><span class="period">${slot.emoji} ${slot.label}</span><span class="time-range">${slot.time}</span></td>`;
     DAYS.forEach((_, di) => {
       const id = getSlotId(di, slot.key);
-      // Build voter list excluding current user (we show separately)
-      const allVoters = votes[id] || [];
-      const othersVoters = currentUser ? allVoters.filter(n => n !== currentUser) : allVoters;
-      const isSelected = localSelections.has(id);
-      const isSubmittedSlot = submitted && isSelected;
-      const count = othersVoters.length + (isSelected ? 1 : 0);
-      const names = othersVoters.slice(0, 4).join('、') + (othersVoters.length > 4 ? `…等${othersVoters.length}人` : '');
-      const displayNames = (isSelected && currentUser)
-        ? [currentUser, ...othersVoters.slice(0, 3)].join('、') + (othersVoters.length > 3 ? `…` : '')
-        : names;
+      const voters = votes[id] || [];
+      const count = voters.length;
+      const iVoted = voters.includes(currentUser);
+      const isTop = count > 0 && count === maxCount;
 
-      let cls = 'slot-btn';
-      if (isSubmittedSlot) cls += ' submitted';
-      else if (isSelected) cls += ' selected';
-      else if (othersVoters.length > 0) cls += ' has-votes';
+      let cls = 'res-slot';
+      if (isTop) cls += ' top-slot';
+      else if (iVoted) cls += ' i-voted';
+      else if (count > 0) cls += ' has-votes';
 
-      const disabled = (isClosed || !currentUser || isSubmitting || submitted) ? 'disabled' : '';
+      // Build names list, me first and bolded
+      const meFirst = iVoted ? [currentUser, ...voters.filter(n => n !== currentUser)] : voters;
+      const nameHtml = meFirst.map(n =>
+        n === currentUser
+          ? `<span style="color:#4f6ef7;font-weight:700"><span class="me-dot"></span>${n}</span>`
+          : n
+      ).join('、');
 
-      html += `<td class="slot-cell">
-        <button class="${cls}" ${disabled} data-slot="${id}" onclick="toggleVote('${id}')">
-          ${isSelected ? '<span class="my-checkmark">✓ 我</span>' : ''}
-          <span class="vote-count">${count > 0 ? count : '—'}</span>
-          <span class="vote-label">${count > 0 ? '位可出席' : '尚無'}</span>
-          ${displayNames ? `<span class="voter-names">${displayNames}</span>` : ''}
-        </button>
+      html += `<td class="res-cell">
+        <div class="${cls}">
+          ${isTop ? '<span class="res-crown">🏆</span>' : ''}
+          <span class="res-count">${count > 0 ? count : '—'}</span>
+          <span class="res-unit">${count > 0 ? '位可出席' : '尚無'}</span>
+          ${nameHtml ? `<div class="res-names">${nameHtml}</div>` : ''}
+        </div>
       </td>`;
     });
     html += '</tr>';
@@ -503,18 +449,70 @@ function renderGrid() {
   table.innerHTML = html;
 }
 
-// --- Submit bar ---
+// ── Edit mode ──
+function enterEditMode() {
+  submitted = false;
+  document.getElementById('resultsPage').classList.remove('visible');
+  document.getElementById('votePage').style.display = '';
+  const btn = document.getElementById('submitBtn');
+  btn.classList.remove('submitting');
+  btn.disabled = localSelections.size === 0;
+  btn.textContent = '送出投票 →';
+  document.getElementById('instruction').textContent = '修改後請再按「送出投票」';
+  renderGrid();
+  updateSubmitBar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Voting grid render ──
+function renderGrid() {
+  const table = document.getElementById('pollGrid');
+  let html = '<thead><tr><th></th>';
+  DAYS.forEach(d => {
+    html += `<th><span class="day-name">${d.label}</span><span class="day-date">${d.date}</span></th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  SLOTS.forEach(slot => {
+    html += `<tr><td class="time-label"><span class="period">${slot.emoji} ${slot.label}</span><span class="time-range">${slot.time}</span></td>`;
+    DAYS.forEach((_, di) => {
+      const id = getSlotId(di, slot.key);
+      const allVoters = votes[id] || [];
+      const othersVoters = currentUser ? allVoters.filter(n => n !== currentUser) : allVoters;
+      const isSelected = localSelections.has(id);
+      const count = othersVoters.length + (isSelected ? 1 : 0);
+      const names = isSelected && currentUser
+        ? [currentUser, ...othersVoters.slice(0, 3)].join('、') + (othersVoters.length > 3 ? '…' : '')
+        : othersVoters.slice(0, 4).join('、') + (othersVoters.length > 4 ? `…等${othersVoters.length}人` : '');
+
+      let cls = 'slot-btn';
+      if (isSelected) cls += ' selected';
+      else if (othersVoters.length > 0) cls += ' has-votes';
+      const disabled = (isClosed || !currentUser || isSubmitting || submitted) ? 'disabled' : '';
+
+      html += `<td class="slot-cell">
+        <button class="${cls}" ${disabled} data-slot="${id}" onclick="toggleVote('${id}')">
+          ${isSelected ? '<span class="my-checkmark">✓ 我</span>' : ''}
+          <span class="vote-count">${count > 0 ? count : '—'}</span>
+          <span class="vote-label">${count > 0 ? '位可出席' : '尚無'}</span>
+          ${names ? `<span class="voter-names">${names}</span>` : ''}
+        </button>
+      </td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
 function updateSubmitBar() {
   const n = localSelections.size;
   const badge = document.getElementById('selectedCount');
   badge.textContent = n;
   badge.className = 'count-badge' + (n === 0 ? ' zero' : '');
-
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = (n === 0);
+  document.getElementById('submitBtn').disabled = (n === 0);
 }
 
-// --- Toast ---
 let toastTimer;
 function showToast(msg, type) {
   const t = document.getElementById('toast');
@@ -524,11 +522,11 @@ function showToast(msg, type) {
   toastTimer = setTimeout(() => { t.className = 'toast'; }, 2500);
 }
 
-// --- Init ---
+// ── Init ──
 checkDeadline();
 renderGrid();
 fetchVotes();
-setInterval(() => { checkDeadline(); }, 1000);
+setInterval(checkDeadline, 1000);
 setInterval(fetchVotes, 30000);
 </script>
 </body>
