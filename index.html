@@ -176,6 +176,28 @@
   .toast.error { background: #c0392b; }
   .instruction { text-align: center; font-size: 0.82rem; color: #888; margin-top: 16px; }
 
+  /* ── Rules box ── */
+  .rules-box {
+    max-width: 900px; margin: 0 auto 24px;
+    background: #fff; border-radius: 14px;
+    padding: 20px 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 5px solid #4f6ef7;
+  }
+  .rules-box h2 {
+    font-size: 15px; font-weight: 800; color: #1a1a2e;
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .rules-box ol {
+    padding-left: 20px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .rules-box li {
+    font-size: 12px; font-weight: 700; color: #333; line-height: 1.6;
+  }
+  .rules-box li span.note {
+    font-weight: 500; color: #666;
+  }
+
   @media (max-width: 600px) {
     .calendar-grid { grid-template-columns: 52px repeat(5, 1fr); }
     .cal-time-label { padding: 8px 2px; }
@@ -191,6 +213,18 @@
 
 <!-- ── VOTE PAGE ── -->
 <div id="votePage">
+
+  <div class="rules-box">
+    <h2>📋 投票說明</h2>
+    <ol>
+      <li>請在下方輸入您的<strong>姓名</strong>並按「確認」後，才能開始投票。</li>
+      <li>請勾選您<strong>方便出席</strong>的會議時段，<strong>可複選多個時段</strong>。</li>
+      <li>選擇完畢後，請按下方的「<strong>送出投票</strong>」按鈕提交結果。<span class="note">（送出前可任意更改選擇）</span></li>
+      <li>投票<strong>一旦送出即無法修改</strong>，請確認後再送出。</li>
+      <li>投票截止時間：<strong>2026年6月25日 凌晨 00:00</strong>，逾時將無法投票。</li>
+    </ol>
+  </div>
+
   <div class="header">
     <h1>📅 線上會議時間投票</h1>
     <p>請選出您方便參加的時段（可複選），協助安排最佳會議時間</p>
