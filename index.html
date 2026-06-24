@@ -13,311 +13,200 @@
     background: #f5f7fa;
     color: #1a1a2e;
     min-height: 100vh;
-    padding: 24px 16px 40px;
+    padding: 24px 16px 60px;
   }
 
-  .header {
-    text-align: center;
-    margin-bottom: 28px;
-  }
-  .header h1 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #1a1a2e;
-    margin-bottom: 6px;
-  }
-  .header p {
-    color: #666;
-    font-size: 0.9rem;
-  }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header h1 { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .header p { color: #666; font-size: 0.9rem; }
 
   .deadline-banner {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: #fff3cd;
-    border: 1px solid #ffc107;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 0.85rem;
-    color: #856404;
-    margin-top: 10px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff3cd; border: 1px solid #ffc107;
+    border-radius: 8px; padding: 8px 16px;
+    font-size: 0.85rem; color: #856404; margin-top: 10px;
   }
-  .deadline-banner.closed {
-    background: #f8d7da;
-    border-color: #dc3545;
-    color: #721c24;
-  }
+  .deadline-banner.closed { background: #f8d7da; border-color: #dc3545; color: #721c24; }
   .deadline-banner .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #ffc107;
-    animation: pulse 1.5s infinite;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ffc107; animation: pulse 1.5s infinite;
   }
-  .deadline-banner.closed .dot {
-    background: #dc3545;
-    animation: none;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+  .deadline-banner.closed .dot { background: #dc3545; animation: none; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   /* Name input */
   .name-section {
-    max-width: 480px;
-    margin: 0 auto 24px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px 24px;
+    max-width: 480px; margin: 0 auto 24px;
+    background: #fff; border-radius: 12px; padding: 20px 24px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
-  .name-section label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #444;
-    margin-bottom: 8px;
-  }
-  .name-row {
-    display: flex;
-    gap: 10px;
-  }
+  .name-section label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 8px; }
+  .name-row { display: flex; gap: 10px; }
   .name-row input {
-    flex: 1;
-    padding: 10px 14px;
-    border: 2px solid #e0e4ef;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s;
-    font-family: inherit;
+    flex: 1; padding: 10px 14px; border: 2px solid #e0e4ef;
+    border-radius: 8px; font-size: 0.95rem; outline: none;
+    transition: border-color 0.2s; font-family: inherit;
   }
   .name-row input:focus { border-color: #4f6ef7; }
   .btn-confirm {
-    padding: 10px 20px;
-    background: #4f6ef7;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    white-space: nowrap;
-    font-family: inherit;
+    padding: 10px 20px; background: #4f6ef7; color: white;
+    border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s, transform 0.1s;
+    white-space: nowrap; font-family: inherit;
   }
   .btn-confirm:hover { background: #3a55d4; }
   .btn-confirm:active { transform: scale(0.97); }
-  .current-user {
-    margin-top: 10px;
-    font-size: 0.85rem;
-    color: #4f6ef7;
-    font-weight: 500;
-  }
+  .current-user { margin-top: 10px; font-size: 0.85rem; color: #4f6ef7; font-weight: 500; }
 
   /* Grid */
   .grid-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    overflow-x: auto;
+    max-width: 900px; margin: 0 auto;
+    background: #fff; border-radius: 16px; padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow-x: auto;
   }
-
-  .grid-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 6px;
-    min-width: 560px;
-  }
-
-  .grid-table th {
-    text-align: center;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #555;
-    padding: 6px 4px 10px;
-  }
-  .grid-table th .day-name {
-    font-size: 1rem;
-    color: #1a1a2e;
-    display: block;
-  }
-  .grid-table th .day-date {
-    font-size: 0.78rem;
-    color: #888;
-  }
-
-  .time-label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #666;
-    padding: 6px 10px;
-    white-space: nowrap;
-    vertical-align: middle;
-  }
-  .time-label .period {
-    display: block;
-    font-size: 1rem;
-    margin-bottom: 2px;
-  }
-  .time-label .time-range {
-    color: #999;
-    font-size: 0.72rem;
-    font-weight: 500;
-  }
-
-  .slot-cell {
-    vertical-align: top;
-    padding: 4px 2px;
-  }
+  .grid-table { width: 100%; border-collapse: separate; border-spacing: 6px; min-width: 560px; }
+  .grid-table th { text-align: center; font-size: 0.82rem; font-weight: 700; color: #555; padding: 6px 4px 10px; }
+  .grid-table th .day-name { font-size: 1rem; color: #1a1a2e; display: block; }
+  .grid-table th .day-date { font-size: 0.78rem; color: #888; }
+  .time-label { font-size: 0.78rem; font-weight: 600; color: #666; padding: 6px 10px; white-space: nowrap; vertical-align: middle; }
+  .time-label .period { display: block; font-size: 1rem; margin-bottom: 2px; }
+  .time-label .time-range { color: #999; font-size: 0.72rem; font-weight: 500; }
+  .slot-cell { vertical-align: top; padding: 4px 2px; }
 
   .slot-btn {
-    width: 100%;
-    min-height: 80px;
-    border-radius: 12px;
-    border: 2px solid #e0e4ef;
-    background: #f8f9ff;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    padding: 10px 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    position: relative;
-    font-family: inherit;
+    width: 100%; min-height: 80px; border-radius: 12px;
+    border: 2px solid #e0e4ef; background: #f8f9ff;
+    cursor: pointer; transition: all 0.18s ease;
+    padding: 10px 8px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 6px; position: relative; font-family: inherit;
   }
-  .slot-btn:hover:not(.voted-self):not(:disabled) {
-    border-color: #4f6ef7;
-    background: #eef1ff;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(79,110,247,0.15);
+  .slot-btn:hover:not(.selected):not(:disabled) {
+    border-color: #4f6ef7; background: #eef1ff;
+    transform: translateY(-1px); box-shadow: 0 3px 10px rgba(79,110,247,0.15);
   }
-  .slot-btn.voted-self {
+  /* locally selected by current user (pending submit) */
+  .slot-btn.selected {
     border-color: #4f6ef7;
     background: linear-gradient(135deg, #eef1ff, #dce3ff);
     box-shadow: 0 2px 8px rgba(79,110,247,0.2);
   }
-  .slot-btn.has-votes:not(.voted-self) {
-    border-color: #b8c5ff;
-    background: #f0f3ff;
+  /* confirmed submitted (same style as selected but green accent) */
+  .slot-btn.submitted {
+    border-color: #1a7a3c;
+    background: linear-gradient(135deg, #eafff2, #c8f5d8);
+    box-shadow: 0 2px 8px rgba(26,122,60,0.15);
   }
-  .slot-btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
+  .slot-btn.has-votes:not(.selected):not(.submitted) {
+    border-color: #b8c5ff; background: #f0f3ff;
   }
+  .slot-btn:disabled { cursor: not-allowed; opacity: 0.6; }
 
-  .vote-count {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #4f6ef7;
-    line-height: 1;
-  }
-  .slot-btn:not(.has-votes) .vote-count { color: #ccc; }
-  .vote-label {
-    font-size: 0.7rem;
-    color: #888;
-  }
-  .slot-btn.voted-self .vote-label { color: #4f6ef7; font-weight: 600; }
-
-  .voter-names {
-    font-size: 0.68rem;
-    color: #666;
-    text-align: center;
-    line-height: 1.4;
-    max-width: 100%;
-    word-break: break-all;
-  }
-  .my-checkmark {
-    position: absolute;
-    top: 6px; right: 8px;
-    font-size: 0.75rem;
-    color: #4f6ef7;
-  }
+  .vote-count { font-size: 1.5rem; font-weight: 700; color: #4f6ef7; line-height: 1; }
+  .slot-btn:not(.has-votes):not(.selected):not(.submitted) .vote-count { color: #ccc; }
+  .slot-btn.submitted .vote-count { color: #1a7a3c; }
+  .vote-label { font-size: 0.7rem; color: #888; }
+  .slot-btn.selected .vote-label { color: #4f6ef7; font-weight: 600; }
+  .slot-btn.submitted .vote-label { color: #1a7a3c; font-weight: 600; }
+  .voter-names { font-size: 0.68rem; color: #666; text-align: center; line-height: 1.4; max-width: 100%; word-break: break-all; }
+  .my-checkmark { position: absolute; top: 6px; right: 8px; font-size: 0.75rem; color: #4f6ef7; }
+  .slot-btn.submitted .my-checkmark { color: #1a7a3c; }
 
   /* Legend */
-  .legend {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    margin-top: 20px;
-    font-size: 0.8rem;
-    color: #666;
-  }
+  .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 20px; font-size: 0.8rem; color: #666; }
   .legend-item { display: flex; align-items: center; gap: 6px; }
-  .legend-dot {
-    width: 14px; height: 14px; border-radius: 4px;
-    border: 2px solid;
-  }
+  .legend-dot { width: 14px; height: 14px; border-radius: 4px; border: 2px solid; }
   .legend-dot.empty { border-color: #e0e4ef; background: #f8f9ff; }
   .legend-dot.others { border-color: #b8c5ff; background: #f0f3ff; }
-  .legend-dot.mine { border-color: #4f6ef7; background: #dce3ff; }
+  .legend-dot.pending { border-color: #4f6ef7; background: #dce3ff; }
+  .legend-dot.done { border-color: #1a7a3c; background: #c8f5d8; }
 
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 28px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: #1a1a2e;
-    color: #fff;
-    padding: 10px 22px;
-    border-radius: 24px;
-    font-size: 0.88rem;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s ease;
-    z-index: 999;
-    white-space: nowrap;
+  /* Submit section */
+  .submit-section {
+    max-width: 900px; margin: 20px auto 0;
+    display: none;
   }
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  .toast.success {
-    background: #1a7a3c;
-  }
-  .toast.error {
-    background: #c0392b;
-  }
+  .submit-section.visible { display: block; }
 
-  /* Saving spinner on slot button */
-  .slot-btn.saving {
-    pointer-events: none;
-    opacity: 0.7;
+  .submit-bar {
+    background: #fff; border-radius: 12px; padding: 16px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
   }
-  .slot-btn.saving::after {
+  .submit-summary { font-size: 0.9rem; color: #555; }
+  .submit-summary strong { color: #1a1a2e; }
+  .submit-summary .count-badge {
+    display: inline-block; background: #4f6ef7; color: #fff;
+    border-radius: 12px; padding: 2px 10px; font-size: 0.78rem; font-weight: 700; margin-left: 6px;
+  }
+  .submit-summary .count-badge.zero { background: #bbb; }
+
+  .btn-submit {
+    padding: 12px 28px; background: #4f6ef7; color: white;
+    border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    font-family: inherit; white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(79,110,247,0.3);
+  }
+  .btn-submit:hover:not(:disabled) { background: #3a55d4; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(79,110,247,0.35); }
+  .btn-submit:active:not(:disabled) { transform: scale(0.97); }
+  .btn-submit:disabled { background: #b0b8e8; cursor: not-allowed; box-shadow: none; }
+
+  .btn-submit.submitting {
+    background: #7a8fe8; cursor: not-allowed;
+  }
+  .btn-submit.submitting::after {
     content: '';
-    position: absolute;
-    top: 6px; left: 6px;
-    width: 14px; height: 14px;
-    border: 2px solid #4f6ef7;
-    border-top-color: transparent;
-    border-radius: 50%;
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.5);
+    border-top-color: #fff; border-radius: 50%;
     animation: spin 0.6s linear infinite;
+    margin-left: 8px; vertical-align: middle;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Success flash on confirmed slot */
-  @keyframes flashGreen {
-    0%   { box-shadow: 0 0 0 0 rgba(26,122,60,0.5); }
-    50%  { box-shadow: 0 0 0 8px rgba(26,122,60,0); }
-    100% { box-shadow: 0 0 0 0 rgba(26,122,60,0); }
+  /* Success confirmation overlay */
+  .success-banner {
+    display: none;
+    max-width: 900px; margin: 20px auto 0;
+    background: linear-gradient(135deg, #eafff2, #d4f7e4);
+    border: 2px solid #1a7a3c; border-radius: 16px;
+    padding: 28px 32px; text-align: center;
+    box-shadow: 0 4px 16px rgba(26,122,60,0.12);
+    animation: fadeIn 0.4s ease;
   }
-  .slot-btn.confirmed {
-    animation: flashGreen 0.6s ease-out;
+  .success-banner.visible { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .success-banner .check-icon { font-size: 2.8rem; margin-bottom: 10px; }
+  .success-banner h2 { font-size: 1.3rem; font-weight: 700; color: #1a7a3c; margin-bottom: 6px; }
+  .success-banner p { font-size: 0.9rem; color: #2e6b4a; margin-bottom: 16px; }
+  .success-slots { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
+  .success-slot-tag {
+    background: #1a7a3c; color: #fff;
+    border-radius: 20px; padding: 5px 14px;
+    font-size: 0.82rem; font-weight: 600;
   }
+  .btn-modify {
+    padding: 9px 22px; background: transparent;
+    border: 2px solid #1a7a3c; color: #1a7a3c;
+    border-radius: 8px; font-size: 0.88rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .btn-modify:hover { background: #1a7a3c; color: #fff; }
 
-  .instruction {
-    text-align: center;
-    font-size: 0.82rem;
-    color: #888;
-    margin-top: 16px;
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a2e; color: #fff; padding: 10px 22px;
+    border-radius: 24px; font-size: 0.88rem; opacity: 0;
+    pointer-events: none; transition: all 0.3s ease; z-index: 999; white-space: nowrap;
   }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #c0392b; }
+
+  .instruction { text-align: center; font-size: 0.82rem; color: #888; margin-top: 16px; }
 </style>
 </head>
 <body>
@@ -342,16 +231,32 @@
 
 <div class="grid-wrapper">
   <table class="grid-table" id="pollGrid"></table>
-
   <div class="legend">
     <div class="legend-item"><div class="legend-dot empty"></div>尚無人選</div>
     <div class="legend-item"><div class="legend-dot others"></div>他人已選</div>
-    <div class="legend-item"><div class="legend-dot mine"></div>我已選</div>
+    <div class="legend-item"><div class="legend-dot pending"></div>我的選擇（未送出）</div>
+    <div class="legend-item"><div class="legend-dot done"></div>已送出</div>
   </div>
 </div>
 
-<p class="instruction" id="instruction">請先輸入姓名，再點選可出席的時段</p>
+<div class="submit-section" id="submitSection">
+  <div class="submit-bar">
+    <div class="submit-summary">
+      已選擇 <span class="count-badge zero" id="selectedCount">0</span> 個時段，確認後請送出
+    </div>
+    <button class="btn-submit" id="submitBtn" onclick="submitVotes()">送出投票 →</button>
+  </div>
+</div>
 
+<div class="success-banner" id="successBanner">
+  <div class="check-icon">✅</div>
+  <h2>投票已成功送出！</h2>
+  <p id="successName"></p>
+  <div class="success-slots" id="successSlots"></div>
+  <button class="btn-modify" onclick="enterEditMode()">修改選擇</button>
+</div>
+
+<p class="instruction" id="instruction">請先輸入姓名，再點選可出席的時段</p>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -365,7 +270,6 @@ const DAYS = [
   { label: '週四', date: '7/2' },
   { label: '週五', date: '7/3' },
 ];
-
 const SLOTS = [
   { key: 'morning', emoji: '🌤', label: '上午', time: '10:00–12:00' },
   { key: 'afternoon', emoji: '☀️', label: '下午', time: '14:00–17:00' },
@@ -374,48 +278,31 @@ const SLOTS = [
 
 let currentUser = null;
 let isClosed = false;
-let votes = {};  // votes[slotId] = ["Alice", "Bob", ...]
-let saving = new Set();  // slots currently being saved
+let votes = {};               // server votes: votes[slotId] = [name, ...]
+let localSelections = new Set();  // user's pending local selections
+let serverUserVotes = new Set();  // user's last-submitted selections (from server)
+let submitted = false;        // whether user has successfully submitted this session
+let isSubmitting = false;
 
-function getSlotId(dayIdx, slotKey) {
-  return `d${dayIdx}_${slotKey}`;
-}
+function getSlotId(d, k) { return `d${d}_${k}`; }
 
 // --- API ---
 async function fetchVotes() {
   try {
     const res = await fetch(API_URL + '?action=get');
     const data = await res.json();
-    if (data.ok) votes = data.votes;
-  } catch (e) {
-    console.warn('fetchVotes failed', e);
-  }
-  renderGrid();
-}
-
-async function sendVote(slotId, active) {
-  const name = encodeURIComponent(currentUser);
-  const url = `${API_URL}?action=vote&name=${name}&slotId=${slotId}&active=${active}`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
     if (data.ok) {
       votes = data.votes;
-      saving.delete(slotId);
-      renderGrid();
-      // flash the confirmed button
-      const btn = document.querySelector(`[data-slot="${slotId}"]`);
-      if (btn) { btn.classList.add('confirmed'); setTimeout(() => btn.classList.remove('confirmed'), 700); }
-      showToast(active ? '✅ 投票已儲存！' : '✅ 已取消並儲存', 'success');
-    } else { throw new Error('api error'); }
-  } catch (e) {
-    // revert optimistic update on failure
-    saving.delete(slotId);
-    if (active) { votes[slotId] = (votes[slotId] || []).filter(n => n !== currentUser); }
-    else { if (!votes[slotId]) votes[slotId] = []; if (!votes[slotId].includes(currentUser)) votes[slotId].push(currentUser); }
-    renderGrid();
-    showToast('⚠️ 儲存失敗，請重試', 'error');
-  }
+      // Build serverUserVotes from response
+      if (currentUser) {
+        serverUserVotes = new Set();
+        for (const [slotId, voters] of Object.entries(votes)) {
+          if (voters.includes(currentUser)) serverUserVotes.add(slotId);
+        }
+      }
+    }
+  } catch (e) { console.warn('fetchVotes failed', e); }
+  renderGrid();
 }
 
 // --- Deadline ---
@@ -432,10 +319,9 @@ function checkDeadline() {
     const h = Math.floor(diff / 3600000);
     const m = Math.floor((diff % 3600000) / 60000);
     const s = Math.floor((diff % 60000) / 1000);
-    const pad = n => String(n).padStart(2,'0');
+    const pad = n => String(n).padStart(2, '0');
     text.textContent = `投票截止：6月25日 00:00 — 剩餘 ${pad(h)}:${pad(m)}:${pad(s)}`;
   }
-  return isClosed;
 }
 
 // --- Name ---
@@ -443,16 +329,129 @@ function confirmName() {
   const val = document.getElementById('nameInput').value.trim();
   if (!val) { showToast('請輸入您的姓名！'); return; }
   currentUser = val;
+  document.getElementById('nameInput').disabled = true;
+  document.getElementById('confirmBtn').disabled = true;
   document.getElementById('currentUserDisplay').style.display = 'block';
   document.getElementById('currentUserDisplay').textContent = `✅ 目前以「${currentUser}」身份投票`;
-  document.getElementById('instruction').textContent = '點選時段即可投票，再點一次取消';
+  document.getElementById('instruction').textContent = '勾選可出席的時段，完成後按「送出投票」';
+
+  // Init local selections from server state
+  localSelections = new Set(serverUserVotes);
+  submitted = false;
+
+  document.getElementById('submitSection').classList.add('visible');
   renderGrid();
-  showToast(`歡迎，${currentUser}！請選擇您的可出席時段 👇`);
+  updateSubmitBar();
+  showToast(`歡迎，${currentUser}！請選擇時段後送出`);
 }
 
 document.getElementById('nameInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') confirmName();
 });
+
+// --- Toggle (local only, no API) ---
+function toggleVote(slotId) {
+  if (!currentUser || isClosed || isSubmitting || submitted) return;
+  if (localSelections.has(slotId)) {
+    localSelections.delete(slotId);
+  } else {
+    localSelections.add(slotId);
+  }
+  renderGrid();
+  updateSubmitBar();
+}
+
+// --- Submit ---
+async function submitVotes() {
+  if (!currentUser || isClosed || isSubmitting || localSelections.size === 0) return;
+  isSubmitting = true;
+  const btn = document.getElementById('submitBtn');
+  btn.classList.add('submitting');
+  btn.disabled = true;
+  btn.textContent = '送出中';
+
+  try {
+    // Compute diff vs server
+    const toAdd = [...localSelections].filter(id => !serverUserVotes.has(id));
+    const toRemove = [...serverUserVotes].filter(id => !localSelections.has(id));
+    const toKeep = [...localSelections].filter(id => serverUserVotes.has(id));
+    // unchanged kept slots don't need API call
+
+    const calls = [
+      ...toAdd.map(id => sendVoteAPI(id, true)),
+      ...toRemove.map(id => sendVoteAPI(id, false)),
+      // resend kept ones too to ensure they're recorded
+      ...toKeep.map(id => sendVoteAPI(id, true)),
+    ];
+    const results = await Promise.all(calls);
+    const anyFail = results.includes(false);
+
+    if (!anyFail) {
+      // Update server state
+      serverUserVotes = new Set(localSelections);
+      // Refresh votes from last API response
+      submitted = true;
+      showSuccessBanner();
+    } else {
+      throw new Error('some calls failed');
+    }
+  } catch (e) {
+    showToast('⚠️ 部分儲存失敗，請重試', 'error');
+    btn.classList.remove('submitting');
+    btn.disabled = false;
+    btn.textContent = '送出投票 →';
+  }
+  isSubmitting = false;
+}
+
+async function sendVoteAPI(slotId, active) {
+  const url = `${API_URL}?action=vote&name=${encodeURIComponent(currentUser)}&slotId=${slotId}&active=${active}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.ok) { votes = data.votes; return true; }
+    return false;
+  } catch (e) { return false; }
+}
+
+// --- Success Banner ---
+function showSuccessBanner() {
+  document.getElementById('submitSection').classList.remove('visible');
+  const banner = document.getElementById('successBanner');
+  banner.classList.add('visible');
+  document.getElementById('successName').textContent = `${currentUser}，感謝您的填寫！`;
+
+  // Show selected slots as tags
+  const slotsEl = document.getElementById('successSlots');
+  slotsEl.innerHTML = '';
+  const SLOT_LABELS = { morning: '🌤 上午 10:00–12:00', afternoon: '☀️ 下午 14:00–17:00', evening: '🌙 晚上 19:00–21:00' };
+  [...localSelections].sort().forEach(id => {
+    const [, di, key] = id.match(/^d(\d+)_(.+)$/);
+    const day = DAYS[parseInt(di)];
+    const tag = document.createElement('span');
+    tag.className = 'success-slot-tag';
+    tag.textContent = `${day.label} ${day.date}　${SLOT_LABELS[key]}`;
+    slotsEl.appendChild(tag);
+  });
+
+  document.getElementById('instruction').textContent = '';
+  renderGrid();
+  // scroll to banner
+  banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function enterEditMode() {
+  submitted = false;
+  document.getElementById('successBanner').classList.remove('visible');
+  document.getElementById('submitSection').classList.add('visible');
+  const btn = document.getElementById('submitBtn');
+  btn.classList.remove('submitting');
+  btn.disabled = false;
+  btn.textContent = '送出投票 →';
+  document.getElementById('instruction').textContent = '修改後請再按「送出投票」';
+  renderGrid();
+  updateSubmitBar();
+}
 
 // --- Render ---
 function renderGrid() {
@@ -470,22 +469,30 @@ function renderGrid() {
     </td>`;
     DAYS.forEach((_, di) => {
       const id = getSlotId(di, slot.key);
-      const voters = votes[id] || [];
-      const iVoted = currentUser && voters.includes(currentUser);
-      const count = voters.length;
-      const names = voters.slice(0, 5).join('、') + (voters.length > 5 ? `…等${voters.length}人` : '');
-      const isSaving = saving.has(id);
+      // Build voter list excluding current user (we show separately)
+      const allVoters = votes[id] || [];
+      const othersVoters = currentUser ? allVoters.filter(n => n !== currentUser) : allVoters;
+      const isSelected = localSelections.has(id);
+      const isSubmittedSlot = submitted && isSelected;
+      const count = othersVoters.length + (isSelected ? 1 : 0);
+      const names = othersVoters.slice(0, 4).join('、') + (othersVoters.length > 4 ? `…等${othersVoters.length}人` : '');
+      const displayNames = (isSelected && currentUser)
+        ? [currentUser, ...othersVoters.slice(0, 3)].join('、') + (othersVoters.length > 3 ? `…` : '')
+        : names;
+
       let cls = 'slot-btn';
-      if (iVoted) cls += ' voted-self';
-      else if (count > 0) cls += ' has-votes';
-      if (isSaving) cls += ' saving';
-      const disabled = (isClosed || !currentUser || isSaving) ? 'disabled' : '';
+      if (isSubmittedSlot) cls += ' submitted';
+      else if (isSelected) cls += ' selected';
+      else if (othersVoters.length > 0) cls += ' has-votes';
+
+      const disabled = (isClosed || !currentUser || isSubmitting || submitted) ? 'disabled' : '';
+
       html += `<td class="slot-cell">
         <button class="${cls}" ${disabled} data-slot="${id}" onclick="toggleVote('${id}')">
-          ${iVoted ? '<span class="my-checkmark">✓ 我</span>' : ''}
+          ${isSelected ? '<span class="my-checkmark">✓ 我</span>' : ''}
           <span class="vote-count">${count > 0 ? count : '—'}</span>
-          <span class="vote-label">${isSaving ? '儲存中…' : (count > 0 ? '位可出席' : '尚無')}</span>
-          ${names && !isSaving ? `<span class="voter-names">${names}</span>` : ''}
+          <span class="vote-label">${count > 0 ? '位可出席' : '尚無'}</span>
+          ${displayNames ? `<span class="voter-names">${displayNames}</span>` : ''}
         </button>
       </td>`;
     });
@@ -496,20 +503,15 @@ function renderGrid() {
   table.innerHTML = html;
 }
 
-// --- Toggle ---
-function toggleVote(slotId) {
-  if (!currentUser || isClosed || saving.has(slotId)) return;
-  const voters = votes[slotId] || [];
-  const iVoted = voters.includes(currentUser);
-  // Optimistic update
-  saving.add(slotId);
-  if (!iVoted) {
-    votes[slotId] = [...voters, currentUser];
-  } else {
-    votes[slotId] = voters.filter(n => n !== currentUser);
-  }
-  renderGrid();
-  sendVote(slotId, !iVoted);
+// --- Submit bar ---
+function updateSubmitBar() {
+  const n = localSelections.size;
+  const badge = document.getElementById('selectedCount');
+  badge.textContent = n;
+  badge.className = 'count-badge' + (n === 0 ? ' zero' : '');
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = (n === 0);
 }
 
 // --- Toast ---
@@ -519,19 +521,14 @@ function showToast(msg, type) {
   t.textContent = msg;
   t.className = 'toast show' + (type ? ' ' + type : '');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.className = 'toast'; }, type === 'success' ? 3000 : 2200);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 2500);
 }
 
 // --- Init ---
 checkDeadline();
 renderGrid();
 fetchVotes();
-setInterval(() => {
-  const wasClosed = isClosed;
-  checkDeadline();
-  if (!wasClosed && isClosed) renderGrid();
-}, 1000);
-// Refresh votes every 30 seconds
+setInterval(() => { checkDeadline(); }, 1000);
 setInterval(fetchVotes, 30000);
 </script>
 </body>
