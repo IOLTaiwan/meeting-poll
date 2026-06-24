@@ -389,40 +389,36 @@ function toggleVote(slotId) {
 
 // ── Submit ──
 async function submitVotes() {
-  if (!currentUser || isClosed || isSubmitting || localSelections.size === 0) return;
-  isSubmitting = true;
-  const btn = document.getElementById('submitBtn');
-  btn.classList.add('submitting');
-  btn.disabled = true;
-  btn.textContent = '送出中';
+if (!currentUser || isClosed || isSubmitting || localSelections.size === 0) return;
+isSubmitting = true;
+const btn = document.getElementById('submitBtn');
+btn.classList.add('submitting');
+btn.disabled = true;
+btn.textContent = '送出中';
 
-  try {
-    const allSlotIds = DAYS.flatMap((_, di) => SLOTS.map(s => getSlotId(di, s.key)));
-    const results = await Promise.all(allSlotIds.map(id => sendVoteAPI(id, localSelections.has(id))));
+try {
+const selected = [...localSelections].join(',');
+const url = `${API_URL}?action=submitAll&name=${encodeURIComponent(currentUser)}&selected=${encodeURIComponent(selected)}`;
+const res = await fetch(url);
+const json = await res.json();
 
-    if (!results.includes(false)) {
-      serverUserVotes = new Set(localSelections);
-      submitted = true;
-      showResultsPage();
-    } else { throw new Error('some calls failed'); }
-  } catch (e) {
-    showToast('⚠️ 部分儲存失敗，請重試', 'error');
-    btn.classList.remove('submitting');
-    btn.disabled = false;
-    btn.textContent = '送出投票 →';
-  }
-  isSubmitting = false;
+if (json.ok) {
+votes = json.votes;
+serverUserVotes = new Set(localSelections);
+submitted = true;
+showResultsPage();
+} else {
+throw new Error(json.error || 'submit failed');
+}
+} catch (e) {
+showToast('⚠️ 部分儲存失敗，請重試', 'error');
+btn.classList.remove('submitting');
+btn.disabled = false;
+btn.textContent = '送出投票 →';
+}
+isSubmitting = false;
 }
 
-async function sendVoteAPI(slotId, active) {
-  const url = `${API_URL}?action=vote&name=${encodeURIComponent(currentUser)}&slotId=${slotId}&active=${active}`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.ok) { votes = data.votes; return true; }
-    return false;
-  } catch (e) { return false; }
-}
 
 // ── Show results page ──
 function showResultsPage() {
