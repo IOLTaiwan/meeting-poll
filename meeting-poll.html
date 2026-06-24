@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>線上會議時間投票</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+    background: #f5f7fa; color: #1a1a2e; min-height: 100vh; padding: 24px 16px 60px;
+  }
+
+  /* ── Header ── */
+  .header { text-align: center; margin-bottom: 28px; }
+  .header h1 { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .header p { color: #666; font-size: 0.9rem; }
+  .deadline-banner {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff3cd; border: 1px solid #ffc107;
+    border-radius: 8px; padding: 8px 16px; font-size: 0.85rem; color: #856404; margin-top: 10px;
+  }
+  .deadline-banner.closed { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+  .deadline-banner .dot { width: 8px; height: 8px; border-radius: 50%; background: #ffc107; animation: pulse 1.5s infinite; }
+  .deadline-banner.closed .dot { background: #dc3545; animation: none; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ── Name ── */
+  .name-section { max-width: 480px; margin: 0 auto 24px; background: #fff; border-radius: 12px; padding: 20px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .name-section label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 8px; }
+  .name-row { display: flex; gap: 10px; }
+  .name-row input { flex: 1; padding: 10px 14px; border: 2px solid #e0e4ef; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; font-family: inherit; }
+  .name-row input:focus { border-color: #4f6ef7; }
+  .btn-confirm { padding: 10px 20px; background: #4f6ef7; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; white-space: nowrap; font-family: inherit; }
+  .btn-confirm:hover { background: #3a55d4; }
+  .btn-confirm:active { transform: scale(0.97); }
+  .btn-confirm:disabled { background: #b0b8e8; cursor: not-allowed; }
+  .current-user { margin-top: 10px; font-size: 0.85rem; color: #4f6ef7; font-weight: 500; }
+
+  /* ── Voting grid ── */
+  .grid-wrapper { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow-x: auto; }
+  .grid-table { width: 100%; border-collapse: separate; border-spacing: 6px; min-width: 560px; }
+  .grid-table th { text-align: center; font-size: 0.82rem; font-weight: 700; color: #555; padding: 6px 4px 10px; }
+  .grid-table th .day-name { font-size: 1rem; color: #1a1a2e; display: block; }
+  .grid-table th .day-date { font-size: 0.78rem; color: #888; }
+  .time-label { font-size: 0.78rem; font-weight: 600; color: #666; padding: 6px 10px; white-space: nowrap; vertical-align: middle; }
+  .time-label .period { display: block; font-size: 1rem; margin-bottom: 2px; }
+  .time-label .time-range { color: #999; font-size: 0.72rem; font-weight: 500; }
+  .slot-cell { vertical-align: top; padding: 4px 2px; }
+  .slot-btn {
+    width: 100%; min-height: 80px; border-radius: 12px; border: 2px solid #e0e4ef; background: #f8f9ff;
+    cursor: pointer; transition: all 0.18s ease; padding: 10px 8px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 6px; position: relative; font-family: inherit;
+  }
+  .slot-btn:hover:not(.selected):not(:disabled) { border-color: #4f6ef7; background: #eef1ff; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(79,110,247,0.15); }
+  .slot-btn.selected { border-color: #4f6ef7; background: linear-gradient(135deg,#eef1ff,#dce3ff); box-shadow: 0 2px 8px rgba(79,110,247,0.2); }
+  .slot-btn.submitted { border-color: #1a7a3c; background: linear-gradient(135deg,#eafff2,#c8f5d8); box-shadow: 0 2px 8px rgba(26,122,60,0.15); }
+  .slot-btn.has-votes:not(.selected):not(.submitted) { border-color: #b8c5ff; background: #f0f3ff; }
+  .slot-btn:disabled { cursor: not-allowed; opacity: 0.6; }
+  .vote-count { font-size: 1.5rem; font-weight: 700; color: #4f6ef7; line-height: 1; }
+  .slot-btn:not(.has-votes):not(.selected):not(.submitted) .vote-count { color: #ccc; }
+  .slot-btn.submitted .vote-count { color: #1a7a3c; }
+  .vote-label { font-size: 0.7rem; color: #888; }
+  .slot-btn.selected .vote-label { color: #4f6ef7; font-weight: 600; }
+  .slot-btn.submitted .vote-label { color: #1a7a3c; font-weight: 600; }
+  .voter-names { font-size: 0.68rem; color: #666; text-align: center; line-height: 1.4; max-width: 100%; word-break: break-word; }
+  .my-checkmark { position: absolute; top: 6px; right: 8px; font-size: 0.75rem; color: #4f6ef7; }
+  .slot-btn.submitted .my-checkmark { color: #1a7a3c; }
+  .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 20px; font-size: 0.8rem; color: #666; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 14px; height: 14px; border-radius: 4px; border: 2px solid; }
+  .legend-dot.empty { border-color: #e0e4ef; background: #f8f9ff; }
+  .legend-dot.others { border-color: #b8c5ff; background: #f0f3ff; }
+  .legend-dot.pending { border-color: #4f6ef7; background: #dce3ff; }
+
+  /* ── Submit bar ── */
+  .submit-section { max-width: 900px; margin: 20px auto 0; display: none; }
+  .submit-section.visible { display: block; }
+  .submit-bar { background: #fff; border-radius: 12px; padding: 16px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .submit-summary { font-size: 0.9rem; color: #555; }
+  .count-badge { display: inline-block; background: #4f6ef7; color: #fff; border-radius: 12px; padding: 2px 10px; font-size: 0.78rem; font-weight: 700; margin-left: 6px; }
+  .count-badge.zero { background: #bbb; }
+  .btn-submit { padding: 12px 28px; background: #4f6ef7; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; font-family: inherit; white-space: nowrap; box-shadow: 0 4px 12px rgba(79,110,247,0.3); }
+  .btn-submit:hover:not(:disabled) { background: #3a55d4; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(79,110,247,0.35); }
+  .btn-submit:active:not(:disabled) { transform: scale(0.97); }
+  .btn-submit:disabled { background: #b0b8e8; cursor: not-allowed; box-shadow: none; }
+  .btn-submit.submitting { background: #7a8fe8; cursor: not-allowed; }
+  .btn-submit.submitting::after { content:''; display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.5); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; margin-left:8px; vertical-align:middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Results page ── */
+  #resultsPage { display: none; }
+  #resultsPage.visible { display: block; }
+
+  .results-header {
+    max-width: 960px; margin: 0 auto 24px;
+    background: linear-gradient(135deg, #1a7a3c, #22944a);
+    border-radius: 16px; padding: 24px 32px;
+    box-shadow: 0 4px 16px rgba(26,122,60,0.2);
+    animation: fadeIn 0.4s ease;
+  }
+  .results-header h2 { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .results-header p { font-size: 0.88rem; color: rgba(255,255,255,0.85); margin-bottom: 10px; }
+  .my-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pick-tag { background: rgba(255,255,255,0.2); color: #fff; border-radius: 20px; padding: 4px 12px; font-size: 0.78rem; font-weight: 600; }
+  .no-vote-note { color: rgba(255,255,255,0.75); font-size: 0.82rem; font-style: italic; }
+
+  /* Voters section */
+  .voters-section { max-width: 960px; margin: 0 auto 20px; background: #fff; border-radius: 16px; padding: 20px 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); animation: fadeIn 0.4s ease 0.1s both; }
+  .voters-section h3 { font-size: 0.95rem; font-weight: 700; color: #1a1a2e; margin-bottom: 12px; }
+  .voters-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .voter-chip { display: flex; align-items: center; gap: 6px; background: #f0f3ff; border: 1.5px solid #b8c5ff; border-radius: 20px; padding: 5px 14px; font-size: 0.82rem; font-weight: 500; color: #3a4aaa; }
+  .voter-chip.is-me { background: #dce3ff; border-color: #4f6ef7; color: #2a3cb5; font-weight: 700; }
+
+  /* ── Calendar ── */
+  .calendar-wrapper { max-width: 960px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); animation: fadeIn 0.4s ease 0.2s both; }
+  .calendar-title { padding: 18px 24px 14px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .calendar-title h3 { font-size: 0.95rem; font-weight: 700; color: #1a1a2e; }
+  .cal-legend { display: flex; gap: 12px; font-size: 0.75rem; color: #888; }
+  .cal-legend-item { display: flex; align-items: center; gap: 5px; }
+  .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  .calendar-grid { display: grid; grid-template-columns: 72px repeat(5, 1fr); border-top: 1px solid #f0f0f0; }
+
+  /* Day header row */
+  .cal-corner { background: #fafbff; border-right: 1px solid #eee; border-bottom: 2px solid #e8ecff; }
+  .cal-day-header {
+    text-align: center; padding: 10px 4px; background: #fafbff;
+    border-right: 1px solid #eee; border-bottom: 2px solid #e8ecff;
+  }
+  .cal-day-header .cal-weekday { font-size: 0.75rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.04em; }
+  .cal-day-header .cal-date { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin-top: 2px; }
+  .cal-day-header .cal-month { font-size: 0.7rem; color: #aaa; }
+
+  /* Time label column */
+  .cal-time-label {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 12px 6px; border-right: 1px solid #eee; border-bottom: 1px solid #f0f0f0;
+    background: #fafbff; font-size: 0.7rem; color: #888; text-align: center; gap: 3px;
+  }
+  .cal-time-label .cal-slot-emoji { font-size: 1.1rem; }
+  .cal-time-label .cal-slot-name { font-weight: 700; color: #555; font-size: 0.72rem; }
+  .cal-time-label .cal-slot-time { color: #aaa; font-size: 0.65rem; line-height: 1.3; }
+
+  /* Event cells */
+  .cal-cell {
+    border-right: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;
+    padding: 8px 6px; min-height: 100px; position: relative;
+  }
+  .cal-cell:last-child { border-right: none; }
+
+  .cal-event {
+    border-radius: 10px; padding: 8px 10px; height: 100%; min-height: 70px;
+    display: flex; flex-direction: column; gap: 3px;
+    border: 2px solid #e8ecff; background: #f8f9ff;
+  }
+  .cal-event.has-votes { border-color: #b8c5ff; background: #f0f4ff; }
+  .cal-event.i-voted { border-color: #4f6ef7; background: linear-gradient(160deg,#eef1ff,#dce3ff); }
+  .cal-event.top-slot { border-color: #f5a623; background: linear-gradient(160deg,#fffbf0,#fff3cc); }
+  .cal-event.top-and-voted { border-color: #f5a623; background: linear-gradient(160deg,#f0fff4,#dcf9e8); }
+
+  .cal-star { font-size: 0.9rem; line-height: 1; display: block; margin-bottom: 2px; }
+  .cal-names { font-size: 0.68rem; color: #666; line-height: 1.8; word-break: break-word; }
+  .cal-event.i-voted .cal-names, .cal-event.top-and-voted .cal-names { color: #444; }
+  .cal-me-name { color: #4f6ef7; font-weight: 700; }
+  .cal-event.top-slot .cal-names, .cal-event.top-and-voted .cal-names { color: #7a5500; }
+  .cal-event.top-slot .cal-me-name, .cal-event.top-and-voted .cal-me-name { color: #c07800; font-weight: 800; }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── Toast ── */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1a2e; color: #fff; padding: 10px 22px; border-radius: 24px; font-size: 0.88rem; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 999; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #c0392b; }
+  .instruction { text-align: center; font-size: 0.82rem; color: #888; margin-top: 16px; }
+
+  /* ── Rules box ── */
+  .rules-box {
+    max-width: 900px; margin: 0 auto 24px;
+    background: #fff; border-radius: 14px;
+    padding: 20px 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 5px solid #4f6ef7;
+  }
+  .rules-box h2 {
+    font-size: 15px; font-weight: 800; color: #1a1a2e;
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .rules-box ol {
+    padding-left: 20px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .rules-box li {
+    font-size: 16px; font-weight: 700; color: #333; line-height: 1.6;
+  }
+  .rules-box li span.note {
+    font-weight: 500; color: #666;
+  }
+
+  @media (max-width: 600px) {
+    .calendar-grid { grid-template-columns: 52px repeat(5, 1fr); }
+    .cal-time-label { padding: 8px 2px; }
+    .cal-time-label .cal-slot-time { display: none; }
+    .cal-cell { padding: 5px 3px; min-height: 80px; }
+    .cal-event { padding: 6px 6px; min-height: 70px; }
+    .cal-count { font-size: 1.1rem; }
+    .cal-names { font-size: 0.58rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── VOTE PAGE ── -->
+<div id="votePage">
+
+  <div class="rules-box">
+    <h2>📋 投票說明</h2>
+    <ol>
+      <li>請在下方輸入您的<strong>姓名</strong>並按「確認」後，才能開始投票。</li>
+      <li>請勾選您<strong>方便出席</strong>的會議時段，<strong>可複選多個時段</strong>。</li>
+      <li>選擇完畢後，請按下方的「<strong>送出投票</strong>」按鈕提交結果。<span class="note">（送出前可任意更改選擇）</span></li>
+      <li>投票<strong>一旦送出即無法修改</strong>，請確認後再送出。</li>
+      <li>投票截止時間：<strong>2026年6月25日 凌晨 00:00</strong>，逾時將無法投票。</li>
+    </ol>
+  </div>
+
+  <div class="header">
+    <h1>📅 線上會議時間投票</h1>
+    <p>請選出您方便參加的時段（可複選），協助安排最佳會議時間</p>
+    <div class="deadline-banner" id="deadlineBanner">
+      <span class="dot"></span>
+      <span id="deadlineText">投票截止：6月25日 凌晨 00:00</span>
+    </div>
+  </div>
+
+  <div class="name-section">
+    <label>您的姓名</label>
+    <div class="name-row">
+      <input type="text" id="nameInput" placeholder="請輸入您的姓名…" maxlength="20" />
+      <button class="btn-confirm" id="confirmBtn" onclick="confirmName()">確認</button>
+    </div>
+    <div class="current-user" id="currentUserDisplay" style="display:none"></div>
+  </div>
+
+  <div class="grid-wrapper">
+    <table class="grid-table" id="pollGrid"></table>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot empty"></div>尚未選擇</div>
+      <div class="legend-item"><div class="legend-dot pending"></div>我的選擇（未送出）</div>
+    </div>
+  </div>
+
+  <div class="submit-section" id="submitSection">
+    <div class="submit-bar">
+      <div class="submit-summary">
+        已選擇 <span class="count-badge zero" id="selectedCount">0</span> 個時段，確認後請送出
+      </div>
+      <button class="btn-submit" id="submitBtn" onclick="submitVotes()" disabled>送出投票 →</button>
+    </div>
+  </div>
+
+  <p class="instruction" id="instruction">請先輸入姓名，再點選可出席的時段</p>
+</div>
+
+<!-- ── RESULTS PAGE ── -->
+<div id="resultsPage">
+
+  <div class="results-header">
+    <h2>✅ 投票已成功送出！</h2>
+    <p id="successName"></p>
+    <div class="my-picks" id="myPicksRow"></div>
+  </div>
+
+  <div class="voters-section">
+    <h3>👥 已投票人員 <span id="voterCountBadge" style="font-size:0.82rem;color:#666;font-weight:500"></span></h3>
+    <div class="voters-chips" id="votersChips"></div>
+  </div>
+
+  <div class="calendar-wrapper">
+    <div class="calendar-title">
+      <h3>📅 6月29日 – 7月3日 投票結果</h3>
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dce3ff;border:2px solid #4f6ef7"></div>我有投</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fff3cc;border:2px solid #f5a623"></div>🏆 票數最多</div>
+      </div>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbx31q07UXEZ8fioUZ5wZ314uqgvy5P5oeCq4i2IWZS7a8yaKUY2cyFOYjTrTqc0cSZD/exec';
+const DEADLINE = new Date('2026-06-25T00:00:00');
+
+const DAYS = [
+  { label: '週一', weekday: 'MON', date: '29', month: '6月', fullDate: '6/29' },
+  { label: '週二', weekday: 'TUE', date: '30', month: '6月', fullDate: '6/30' },
+  { label: '週三', weekday: 'WED', date: '1',  month: '7月', fullDate: '7/1' },
+  { label: '週四', weekday: 'THU', date: '2',  month: '7月', fullDate: '7/2' },
+  { label: '週五', weekday: 'FRI', date: '3',  month: '7月', fullDate: '7/3' },
+];
+const SLOTS = [
+  { key: 'morning',   emoji: '🌤', label: '上午', time: '10:00\n12:00' },
+  { key: 'afternoon', emoji: '☀️', label: '下午', time: '14:00\n17:00' },
+  { key: 'evening',   emoji: '🌙', label: '晚上', time: '19:00\n21:00' },
+];
+const SLOT_SHORT = { morning: '🌤 上午', afternoon: '☀️ 下午', evening: '🌙 晚上' };
+
+let currentUser = null;
+let isClosed = false;
+let votes = {};
+let localSelections = new Set();
+let serverUserVotes = new Set();
+let submitted = false;
+let isSubmitting = false;
+
+function getSlotId(d, k) { return `d${d}_${k}`; }
+
+// ── API ──
+async function fetchVotes() {
+  try {
+    const res = await fetch(API_URL + '?action=get');
+    const data = await res.json();
+    if (data.ok) {
+      votes = data.votes;
+      if (currentUser) {
+        serverUserVotes = new Set();
+        for (const [slotId, voters] of Object.entries(votes)) {
+          if (voters.includes(currentUser)) serverUserVotes.add(slotId);
+        }
+      }
+    }
+  } catch (e) { console.warn('fetchVotes failed', e); }
+  if (!submitted) renderGrid();
+  else { renderVotersList(); renderCalendar(); }
+}
+
+// ── Deadline ──
+function checkDeadline() {
+  const now = new Date();
+  isClosed = now >= DEADLINE;
+  const banner = document.getElementById('deadlineBanner');
+  const text = document.getElementById('deadlineText');
+  if (isClosed) {
+    banner.className = 'deadline-banner closed';
+    text.textContent = '投票已截止（6月25日 凌晨 00:00）';
+  } else {
+    const diff = DEADLINE - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    const pad = n => String(n).padStart(2, '0');
+    text.textContent = `投票截止：6月25日 00:00 — 剩餘 ${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+}
+
+// ── Name ──
+function confirmName() {
+  const val = document.getElementById('nameInput').value.trim();
+  if (!val) { showToast('請輸入您的姓名！'); return; }
+  currentUser = val;
+  document.getElementById('nameInput').disabled = true;
+  document.getElementById('confirmBtn').disabled = true;
+  document.getElementById('currentUserDisplay').style.display = 'block';
+  document.getElementById('currentUserDisplay').textContent = `✅ 目前以「${currentUser}」身份投票`;
+  document.getElementById('instruction').textContent = '勾選可出席的時段，完成後按「送出投票」（送出後無法修改）';
+  localSelections = new Set(serverUserVotes);
+  submitted = false;
+  document.getElementById('submitSection').classList.add('visible');
+  renderGrid();
+  updateSubmitBar();
+  showToast(`歡迎，${currentUser}！請選擇時段後送出`);
+}
+document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') confirmName(); });
+
+// ── Toggle (local only) ──
+function toggleVote(slotId) {
+  if (!currentUser || isClosed || isSubmitting || submitted) return;
+  if (localSelections.has(slotId)) localSelections.delete(slotId);
+  else localSelections.add(slotId);
+  renderGrid();
+  updateSubmitBar();
+}
+
+// ── Submit ── (single API call with all selections)
+async function submitVotes() {
+  if (!currentUser || isClosed || isSubmitting || localSelections.size === 0) return;
+  isSubmitting = true;
+  const btn = document.getElementById('submitBtn');
+  btn.classList.add('submitting');
+  btn.disabled = true;
+  btn.textContent = '送出中';
+
+  try {
+    const selected = [...localSelections].join(',');
+    const url = `${API_URL}?action=submitAll&name=${encodeURIComponent(currentUser)}&selected=${encodeURIComponent(selected)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.ok) {
+      votes = data.votes;
+      serverUserVotes = new Set(localSelections);
+      submitted = true;
+      showResultsPage();
+    } else {
+      throw new Error(data.error || 'submit failed');
+    }
+  } catch (e) {
+    showToast('⚠️ 送出失敗，請重試', 'error');
+    btn.classList.remove('submitting');
+    btn.disabled = false;
+    btn.textContent = '送出投票 →';
+  }
+  isSubmitting = false;
+}
+
+// ── Show results page ──
+function showResultsPage() {
+  document.getElementById('votePage').style.display = 'none';
+  document.getElementById('resultsPage').classList.add('visible');
+
+  // Header
+  document.getElementById('successName').textContent = `${currentUser}，感謝您的填寫！`;
+  const picksRow = document.getElementById('myPicksRow');
+  picksRow.innerHTML = '';
+  if (localSelections.size === 0) {
+    const note = document.createElement('span');
+    note.className = 'no-vote-note';
+    note.textContent = '（本次未選擇任何時段）';
+    picksRow.appendChild(note);
+  } else {
+    [...localSelections].sort().forEach(id => {
+      const m = id.match(/^d(\d+)_(.+)$/);
+      if (!m) return;
+      const day = DAYS[parseInt(m[1])];
+      const tag = document.createElement('span');
+      tag.className = 'pick-tag';
+      tag.textContent = `${day.fullDate} ${SLOT_SHORT[m[2]]}`;
+      picksRow.appendChild(tag);
+    });
+  }
+
+  renderVotersList();
+  renderCalendar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Voters list ──
+function renderVotersList() {
+  const allVoters = new Set();
+  for (const voters of Object.values(votes)) voters.forEach(n => allVoters.add(n));
+  const arr = [...allVoters].sort((a, b) => a.localeCompare(b, 'zh-TW'));
+  document.getElementById('voterCountBadge').textContent = `（共 ${arr.length} 人）`;
+  const chips = document.getElementById('votersChips');
+  chips.innerHTML = '';
+  if (arr.length === 0) {
+    chips.innerHTML = '<span style="color:#999;font-size:0.85rem">尚無人投票</span>';
+    return;
+  }
+  arr.forEach(name => {
+    const chip = document.createElement('div');
+    chip.className = 'voter-chip' + (name === currentUser ? ' is-me' : '');
+    chip.textContent = (name === currentUser ? '✓ ' : '') + name;
+    chips.appendChild(chip);
+  });
+}
+
+// ── Calendar render ──
+function renderCalendar() {
+  const allCounts = DAYS.flatMap((_, di) => SLOTS.map(s => (votes[getSlotId(di, s.key)] || []).length));
+  const maxCount = Math.max(...allCounts, 0);
+
+  const grid = document.getElementById('calendarGrid');
+  let html = '';
+
+  // Header row
+  html += '<div class="cal-corner"></div>';
+  DAYS.forEach(d => {
+    html += `<div class="cal-day-header">
+      <div class="cal-weekday">${d.weekday}</div>
+      <div class="cal-date">${d.date}</div>
+      <div class="cal-month">${d.month}</div>
+    </div>`;
+  });
+
+  // Slot rows
+  SLOTS.forEach(slot => {
+    const timeLines = slot.time.split('\n');
+    html += `<div class="cal-time-label">
+      <span class="cal-slot-emoji">${slot.emoji}</span>
+      <span class="cal-slot-name">${slot.label}</span>
+      <span class="cal-slot-time">${timeLines[0]}<br>–<br>${timeLines[1]}</span>
+    </div>`;
+
+    DAYS.forEach((_, di) => {
+      const id = getSlotId(di, slot.key);
+      const voters = votes[id] || [];
+      const count = voters.length;
+      const iVoted = voters.includes(currentUser);
+      const isTop = count > 0 && count === maxCount;
+
+      let cls = 'cal-event';
+      if (isTop && iVoted) cls += ' top-and-voted';
+      else if (isTop) cls += ' top-slot';
+      else if (iVoted) cls += ' i-voted';
+      else if (count > 0) cls += ' has-votes';
+
+      // Names: me first, bold, each on own line
+      const meFirst = iVoted
+        ? [currentUser, ...voters.filter(n => n !== currentUser)]
+        : voters;
+      const namesHtml = meFirst.map(n =>
+        n === currentUser ? `<span class="cal-me-name">● ${n}</span>` : `<span>${n}</span>`
+      ).join('<br>');
+
+      html += `<div class="cal-cell"><div class="${cls}">
+        ${isTop ? '<span class="cal-star">🌟</span>' : ''}
+        ${namesHtml ? `<div class="cal-names">${namesHtml}</div>` : '<div class="cal-names" style="color:#ddd">—</div>'}
+      </div></div>`;
+    });
+  });
+
+  grid.innerHTML = html;
+}
+
+// ── Voting grid render ──
+function renderGrid() {
+  const table = document.getElementById('pollGrid');
+  let html = '<thead><tr><th></th>';
+  DAYS.forEach(d => {
+    html += `<th><span class="day-name">${d.label}</span><span class="day-date">${d.fullDate}</span></th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  SLOTS.forEach(slot => {
+    html += `<tr><td class="time-label"><span class="period">${slot.emoji} ${slot.label}</span><span class="time-range">${slot.time.replace('\n', '–')}</span></td>`;
+    DAYS.forEach((_, di) => {
+      const id = getSlotId(di, slot.key);
+      const isSelected = localSelections.has(id);
+
+      let cls = 'slot-btn';
+      if (isSelected) cls += ' selected';
+      const disabled = (isClosed || !currentUser || isSubmitting || submitted) ? 'disabled' : '';
+
+      html += `<td class="slot-cell">
+        <button class="${cls}" ${disabled} data-slot="${id}" onclick="toggleVote('${id}')">
+          ${isSelected ? '<span class="my-checkmark">✓</span>' : ''}
+          <span class="vote-label" style="font-size:0.82rem">${isSelected ? '✅ 已選' : '點選選擇'}</span>
+        </button>
+      </td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+function updateSubmitBar() {
+  const n = localSelections.size;
+  const badge = document.getElementById('selectedCount');
+  badge.textContent = n;
+  badge.className = 'count-badge' + (n === 0 ? ' zero' : '');
+  document.getElementById('submitBtn').disabled = (n === 0);
+}
+
+let toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 2500);
+}
+
+// ── Init ──
+checkDeadline();
+renderGrid();
+fetchVotes();
+setInterval(checkDeadline, 1000);
+setInterval(fetchVotes, 30000);
+</script>
+</body>
+</html>
