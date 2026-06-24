@@ -278,6 +278,39 @@
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
+  .toast.success {
+    background: #1a7a3c;
+  }
+  .toast.error {
+    background: #c0392b;
+  }
+
+  /* Saving spinner on slot button */
+  .slot-btn.saving {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .slot-btn.saving::after {
+    content: '';
+    position: absolute;
+    top: 6px; left: 6px;
+    width: 14px; height: 14px;
+    border: 2px solid #4f6ef7;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Success flash on confirmed slot */
+  @keyframes flashGreen {
+    0%   { box-shadow: 0 0 0 0 rgba(26,122,60,0.5); }
+    50%  { box-shadow: 0 0 0 8px rgba(26,122,60,0); }
+    100% { box-shadow: 0 0 0 0 rgba(26,122,60,0); }
+  }
+  .slot-btn.confirmed {
+    animation: flashGreen 0.6s ease-out;
+  }
 
   .instruction {
     text-align: center;
@@ -342,6 +375,7 @@ const SLOTS = [
 let currentUser = null;
 let isClosed = false;
 let votes = {};  // votes[slotId] = ["Alice", "Bob", ...]
+let saving = new Set();  // slots currently being saved
 
 function getSlotId(dayIdx, slotKey) {
   return `d${dayIdx}_${slotKey}`;
@@ -365,11 +399,23 @@ async function sendVote(slotId, active) {
   try {
     const res = await fetch(url);
     const data = await res.json();
-    if (data.ok) votes = data.votes;
+    if (data.ok) {
+      votes = data.votes;
+      saving.delete(slotId);
+      renderGrid();
+      // flash the confirmed button
+      const btn = document.querySelector(`[data-slot="${slotId}"]`);
+      if (btn) { btn.classList.add('confirmed'); setTimeout(() => btn.classList.remove('confirmed'), 700); }
+      showToast(active ? '✅ 投票已儲存！' : '✅ 已取消並儲存', 'success');
+    } else { throw new Error('api error'); }
   } catch (e) {
-    console.warn('sendVote failed', e);
+    // revert optimistic update on failure
+    saving.delete(slotId);
+    if (active) { votes[slotId] = (votes[slotId] || []).filter(n => n !== currentUser); }
+    else { if (!votes[slotId]) votes[slotId] = []; if (!votes[slotId].includes(currentUser)) votes[slotId].push(currentUser); }
+    renderGrid();
+    showToast('⚠️ 儲存失敗，請重試', 'error');
   }
-  renderGrid();
 }
 
 // --- Deadline ---
@@ -428,16 +474,18 @@ function renderGrid() {
       const iVoted = currentUser && voters.includes(currentUser);
       const count = voters.length;
       const names = voters.slice(0, 5).join('、') + (voters.length > 5 ? `…等${voters.length}人` : '');
+      const isSaving = saving.has(id);
       let cls = 'slot-btn';
       if (iVoted) cls += ' voted-self';
       else if (count > 0) cls += ' has-votes';
-      const disabled = (isClosed || !currentUser) ? 'disabled' : '';
+      if (isSaving) cls += ' saving';
+      const disabled = (isClosed || !currentUser || isSaving) ? 'disabled' : '';
       html += `<td class="slot-cell">
-        <button class="${cls}" ${disabled} onclick="toggleVote('${id}')">
+        <button class="${cls}" ${disabled} data-slot="${id}" onclick="toggleVote('${id}')">
           ${iVoted ? '<span class="my-checkmark">✓ 我</span>' : ''}
           <span class="vote-count">${count > 0 ? count : '—'}</span>
-          <span class="vote-label">${count > 0 ? '位可出席' : '尚無'}</span>
-          ${names ? `<span class="voter-names">${names}</span>` : ''}
+          <span class="vote-label">${isSaving ? '儲存中…' : (count > 0 ? '位可出席' : '尚無')}</span>
+          ${names && !isSaving ? `<span class="voter-names">${names}</span>` : ''}
         </button>
       </td>`;
     });
@@ -450,16 +498,15 @@ function renderGrid() {
 
 // --- Toggle ---
 function toggleVote(slotId) {
-  if (!currentUser || isClosed) return;
+  if (!currentUser || isClosed || saving.has(slotId)) return;
   const voters = votes[slotId] || [];
   const iVoted = voters.includes(currentUser);
   // Optimistic update
+  saving.add(slotId);
   if (!iVoted) {
     votes[slotId] = [...voters, currentUser];
-    showToast('✅ 已加入！');
   } else {
     votes[slotId] = voters.filter(n => n !== currentUser);
-    showToast('已取消選取');
   }
   renderGrid();
   sendVote(slotId, !iVoted);
@@ -467,12 +514,12 @@ function toggleVote(slotId) {
 
 // --- Toast ---
 let toastTimer;
-function showToast(msg) {
+function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.classList.add('show');
+  t.className = 'toast show' + (type ? ' ' + type : '');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, type === 'success' ? 3000 : 2200);
 }
 
 // --- Init ---
