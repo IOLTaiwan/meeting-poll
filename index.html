@@ -152,8 +152,8 @@
   .cal-cell:last-child { border-right: none; }
 
   .cal-event {
-    border-radius: 10px; padding: 8px 10px; height: 100%; min-height: 86px;
-    display: flex; flex-direction: column; gap: 4px;
+    border-radius: 10px; padding: 8px 10px; height: 100%; min-height: 70px;
+    display: flex; flex-direction: column; gap: 3px;
     border: 2px solid #e8ecff; background: #f8f9ff;
   }
   .cal-event.has-votes { border-color: #b8c5ff; background: #f0f4ff; }
@@ -161,23 +161,12 @@
   .cal-event.top-slot { border-color: #f5a623; background: linear-gradient(160deg,#fffbf0,#fff3cc); }
   .cal-event.top-and-voted { border-color: #f5a623; background: linear-gradient(160deg,#f0fff4,#dcf9e8); }
 
-  .cal-count-row { display: flex; align-items: center; gap: 5px; }
-  .cal-count { font-size: 1.4rem; font-weight: 800; line-height: 1; color: #bbb; }
-  .cal-event.has-votes .cal-count, .cal-event.i-voted .cal-count { color: #4f6ef7; }
-  .cal-event.top-slot .cal-count, .cal-event.top-and-voted .cal-count { color: #c07800; }
-  .cal-count-unit { font-size: 0.65rem; color: #aaa; }
-  .cal-event.has-votes .cal-count-unit, .cal-event.i-voted .cal-count-unit { color: #7a90f7; }
-  .cal-event.top-slot .cal-count-unit, .cal-event.top-and-voted .cal-count-unit { color: #c07800; }
-  .cal-crown { font-size: 0.85rem; line-height: 1; }
-  .cal-names { font-size: 0.63rem; color: #888; line-height: 1.5; word-break: break-all; }
-  .cal-event.i-voted .cal-names, .cal-event.top-and-voted .cal-names { color: #555; }
+  .cal-star { font-size: 0.9rem; line-height: 1; display: block; margin-bottom: 2px; }
+  .cal-names { font-size: 0.68rem; color: #666; line-height: 1.6; word-break: break-all; }
+  .cal-event.i-voted .cal-names, .cal-event.top-and-voted .cal-names { color: #444; }
   .cal-me-name { color: #4f6ef7; font-weight: 700; }
-  .cal-event.top-slot .cal-me-name, .cal-event.top-and-voted .cal-me-name { color: #c07800; }
-  .cal-voted-badge {
-    display: inline-block; background: #4f6ef7; color: #fff;
-    border-radius: 8px; padding: 1px 7px; font-size: 0.6rem; font-weight: 700; margin-top: auto; width: fit-content;
-  }
-  .cal-event.top-and-voted .cal-voted-badge { background: #c07800; }
+  .cal-event.top-slot .cal-names, .cal-event.top-and-voted .cal-names { color: #7a5500; }
+  .cal-event.top-slot .cal-me-name, .cal-event.top-and-voted .cal-me-name { color: #c07800; font-weight: 800; }
 
   @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
@@ -501,13 +490,8 @@ function renderCalendar() {
       ).join('、');
 
       html += `<div class="cal-cell"><div class="${cls}">
-        <div class="cal-count-row">
-          <span class="cal-count">${count > 0 ? count : '—'}</span>
-          ${count > 0 ? `<span class="cal-count-unit">人</span>` : ''}
-          ${isTop ? '<span class="cal-crown">🏆</span>' : ''}
-        </div>
-        ${namesHtml ? `<div class="cal-names">${namesHtml}</div>` : ''}
-        ${iVoted ? '<span class="cal-voted-badge">✓ 我有投</span>' : ''}
+        ${isTop ? '<span class="cal-star">🌟</span>' : ''}
+        ${namesHtml ? `<div class="cal-names">${namesHtml}</div>` : '<div class="cal-names" style="color:#ddd">—</div>'}
       </div></div>`;
     });
   });
